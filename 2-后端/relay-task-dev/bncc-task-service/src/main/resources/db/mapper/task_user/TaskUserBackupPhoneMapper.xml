@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.task_user.mapper.TaskUserBackupPhoneMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.task_user.entity.TaskUserBackupPhone">
+    <id column="main__id" property="id" />
+    <result column="main__account_number" jdbcType="VARCHAR" property="accountNumber" />
+    <result column="main__backup_phone" jdbcType="VARCHAR" property="backupPhone" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.account_number as main__account_number, main.backup_phone as main__backup_phone, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <select id="searchByAccountNumber" parameterType="java.lang.String" resultType="java.lang.String">
+      select
+        main.backup_phone
+      from
+        t_task_user_backup_phone main
+      where
+        main.deleted = 0
+        AND main.account_number = #{accountNumber}
+    </select>
+
+    <select id="searchListByAccountNumber" parameterType="java.util.ArrayList" resultMap="BaseResultMap">
+      select
+        <include refid="Base_Column_List" />
+      from
+        t_task_user_backup_phone main
+      where
+        main.deleted = 0
+      <if test = "accountNumberList != null">
+        AND main.account_number in
+        <foreach collection="accountNumberList" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </select>
+
+</mapper>

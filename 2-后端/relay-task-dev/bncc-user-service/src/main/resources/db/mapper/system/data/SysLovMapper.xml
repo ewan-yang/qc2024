@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.data.mapper.SysLovMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.data.entity.SysLov">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__code" jdbcType="VARCHAR" property="code" />
+    <result column="main__name" jdbcType="VARCHAR" property="name" />
+    <result column="main__module" jdbcType="VARCHAR" property="module" />
+    <result column="main__type" jdbcType="INTEGER" property="type" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="INTEGER" property="status" />
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+
+    <collection property="lovLineList" ofType="com.tecpie.platform.user.business.system.data.entity.SysLovLine">
+      <id column="lov_line_id" jdbcType="BIGINT" property="id" />
+      <result column="lov_line_lov_id" jdbcType="BIGINT" property="lovId" />
+      <result column="lov_line_code" jdbcType="VARCHAR" property="code" />
+      <result column="lov_line_name" jdbcType="VARCHAR" property="name" />
+      <result column="lov_line_value" jdbcType="VARCHAR" property="value" />
+      <result column="lov_line_sort" jdbcType="INTEGER" property="sort" />
+      <result column="lov_line_remark" jdbcType="VARCHAR" property="remark" />
+      <result column="lov_line_status" jdbcType="INTEGER" property="status" />
+      <result column="lov_line_deleted" jdbcType="INTEGER" property="deleted" />
+      <result column="lov_line_create_by" jdbcType="BIGINT" property="createBy" />
+      <result column="lov_line_create_date" jdbcType="TIMESTAMP" property="createDate" />
+      <result column="lov_line_update_by" jdbcType="BIGINT" property="updateBy" />
+      <result column="lov_line_update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    </collection>
+  </resultMap>
+
+    <sql id="Base_Column_List">
+        main
+        .
+        id
+        as main__id, main.code as main__code, main.name as main__name, main.module as main__module, main.type as main__type,
+      main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by,
+      main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+    <sql id="LovLine_Column_List">
+        lovline
+        .
+        id
+        as lov_line_id, lovline.lov_id as lov_line_lov_id, lovline.code as lov_line_code, lovline.name as lov_line_name,
+      lovline.value as lov_line_value, lovline.sort as lov_line_sort, lovline.remark as lov_line_remark, lovline.status as lov_line_status,
+      lovline.deleted as lov_line_deleted, lovline.create_by as lov_line_create_by, lovline.create_date as lov_line_create_date,
+      lovline.update_by as lov_line_update_by, lovline.update_date as lov_line_update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.user.business.data.api.command.query.SysLovQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine"/>
+      from sys_lov main
+      where main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.code != null and condition.code != ''">
+        AND main.code = #{condition.code, jdbcType=VARCHAR}
+      </if>
+      <if test = "condition.status != null">
+        AND main.status = #{condition.status, jdbcType=BIGINT}
+      </if>
+      <if test = "condition.createBy != null and condition.createBy != ''">
+        AND main.create_by = #{condition.createBy}
+      </if>
+      <if test = "condition.createDateBegin != null">
+        AND main.create_date &gt;= #{condition.createDateBegin}
+      </if>
+      <if test = "condition.createDateEnd != null">
+        AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+      <if test = "condition.updateBy != null and condition.updateBy != ''">
+        AND main.update_by = #{condition.updateBy}
+      </if>
+      <if test = "condition.updateDateBegin != null">
+        AND main.update_date &gt;= #{condition.updateDateBegin}
+      </if>
+      <if test = "condition.updateDateEnd != null">
+        AND main.update_date &lt;= #{condition.updateDateEnd}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />, <include refid="LovLine_Column_List"/>
+      from sys_lov main
+      LEFT JOIN sys_lov_line lovline on main.id = lovline.lov_id  and lovline.deleted = 0
+      where main.deleted = 0 and main.id = #{id}
+    </select>
+</mapper>

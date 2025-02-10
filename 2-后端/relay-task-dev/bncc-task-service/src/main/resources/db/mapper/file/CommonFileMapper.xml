@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.file.mapper.CommonFileMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.file.entity.CommonFile">
+    <id column="main__id" property="id" />
+    <result column="main__business_type" jdbcType="BIT" property="businessType" />
+    <result column="main__business_id" jdbcType="BIGINT" property="businessId" />
+    <result column="main__file_source" jdbcType="BIT" property="fileSource" />
+    <result column="main__file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="main__file_size" jdbcType="VARCHAR" property="fileSize" />
+    <result column="main__file_time" jdbcType="TIMESTAMP" property="fileTime" />
+    <result column="main__file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="main__file_content" jdbcType="LONGVARBINARY" property="fileContent" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.business_type as main__business_type, main.business_id as main__business_id,
+      main.file_source as main__file_source, main.file_name as main__file_name, main.file_size as main__file_size,
+      main.file_time as main__file_time, main.file_url as main__file_url, main.file_content as main__file_content,
+      main.remark as main__remark, main.status as main__status, main.deleted as main__deleted,
+      main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by,
+      main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.file.api.command.query.CommonFileQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from t_common_file main
+      where main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.businessType != null">
+        AND main.business_type = #{condition.businessType, jdbcType=INTEGER}
+      </if>
+      <if test = "condition.businessId != null">
+        AND main.business_id = #{condition.businessId, jdbcType=BIGINT}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from t_common_file main
+      where main.deleted = 0 and main.id = #{id}
+    </select>
+  
+    <select id="selectForUpdate" parameterType="integer" resultMap="BaseResultMap">
+      SELECT * FROM t_common_file WHERE file_source = #{source} FOR UPDATE
+    </select>
+</mapper>

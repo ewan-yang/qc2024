@@ -1,0 +1,4 @@
+rootProject.name = 'analysis-alarm'
+include 'bncc-analysis-alarm-api'
+include 'bncc-analysis-alarm-service'
+

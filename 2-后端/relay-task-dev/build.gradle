@@ -1,0 +1,12 @@
+plugins {
+  id "java"
+  id "org.sonarqube" version "3.3"
+  id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+apply from: resources.text.fromInsecureUri("${nexusUrl}/repository/row-hosted/backend/gradle/config/common/common-config-1.0.0.gradle")
+apply from: resources.text.fromInsecureUri("${nexusUrl}/repository/row-hosted/backend/gradle/config/nexus/nexus-config-1.0.0.gradle")
+apply from: resources.text.fromInsecureUri("${nexusUrl}/repository/row-hosted/backend/gradle/config/sonarqube/sonarqube-config-1.0.0.gradle")
+
+group 'com.tecpie.bncc'
+version '1.0.0-SNAPSHOT'

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.task.mapper.TaskExecuteStatusMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.task.entity.TaskExecuteStatus">
+    <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+    <result column="main__task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="main__execute_status" jdbcType="BIT" property="executeStatus" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.task_id as main__task_id, main.execute_status as main__execute_status, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.task.api.command.query.TaskExecuteStatusQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from
+        t_task_execute_status main
+      where
+        main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.taskId != null">
+        AND main.task_id = #{condition.taskId, jdbcType=BIGINT}
+      </if>
+      <if test = "condition.executeStatus != null">
+        AND main.execute_status = #{condition.executeStatus}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+        from
+        t_task_execute_status main
+        where
+        main.deleted = 0 and main.id = #{id}
+    </select>
+
+    <delete id="deleteByTaskId">
+        delete
+        from t_task_execute_status
+        where task_id = #{taskId}
+    </delete>
+</mapper>

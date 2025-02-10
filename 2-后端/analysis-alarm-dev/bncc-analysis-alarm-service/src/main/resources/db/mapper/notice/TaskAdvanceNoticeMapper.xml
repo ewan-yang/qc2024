@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.notice.mapper.TaskAdvanceNoticeMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.notice.entity.TaskAdvanceNotice">
+        <id column="main__id" property="id" />
+        <result column="main__business_type" jdbcType="BIT" property="businessType" />
+        <result column="main__business_id" jdbcType="BIGINT" property="businessId" />
+        <result column="main__alarm_type" jdbcType="BIT" property="alarmType" />
+        <result column="main__alarm_title" jdbcType="VARCHAR" property="alarmTitle" />
+        <result column="main__alarm_content" jdbcType="VARCHAR" property="alarmContent" />
+        <result column="main__alarm_time" jdbcType="TIMESTAMP" property="alarmTime" />
+        <result column="main__attribute1" jdbcType="VARCHAR" property="attribute1" />
+        <result column="main__attribute2" jdbcType="VARCHAR" property="attribute2" />
+        <result column="main__attribute3" jdbcType="VARCHAR" property="attribute3" />
+        <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+        <result column="main__status" jdbcType="BIT" property="status" />
+        <result column="main__deleted" jdbcType="BIT" property="deleted" />
+        <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+        <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+        <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        main.id as main__id, main.business_type as main__business_type, main.business_id as main__business_id,
+        main.alarm_type as main__alarm_type, main.alarm_title as main__alarm_title, main.alarm_content as main__alarm_content,
+        main.alarm_time as main__alarm_time, main.attribute1 as main__attribute1, main.attribute2 as main__attribute2,
+        main.attribute3 as main__attribute3, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted,
+        main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.notice.api.command.query.TaskAdvanceNoticeQueryCommand" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            t_task_advance_notice main
+        where
+            main.deleted = 0
+        AND main.status = 1
+        <if test = "condition.businessType != null">
+            AND main.business_type = #{condition.businessType, jdbcType=BIT}
+        </if>
+        <if test = "condition.businessIdList != null">
+            AND main.business_id in
+            <foreach collection="condition.businessIdList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "condition.alarmType != null">
+            AND main.alarm_type = #{condition.alarmType, jdbcType=BIT}
+        </if>
+        <if test = "condition.alarmTypeList != null">
+            AND main.alarm_type in
+            <foreach collection="condition.alarmTypeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "condition.alarmTitle != null and condition.alarmTitle != ''">
+            AND main.alarm_title like CONCAT('%',#{condition.alarmTitle, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.alarmContent != null and condition.alarmContent != ''">
+            AND main.alarm_content like CONCAT('%',#{condition.alarmContent, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.alarmTimeBegin != null">
+            AND main.alarm_time &gt;= #{condition.alarmTimeBegin}
+        </if>
+        <if test = "condition.alarmTimeEnd != null">
+            AND main.alarm_time &lt;= #{condition.alarmTimeEnd}
+        </if>
+        order by main.alarm_time desc
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            t_task_advance_notice main
+        where
+            main.deleted = 0
+            and main.id = #{id}
+    </select>
+
+    <!-- 计划变更预警 -->
+    <resultMap id="PlanChangeResultMap" type="com.tecpie.platform.notice.entity.PlanChangeAdvanceNotice">
+        <result column="t__plan_item_id" jdbcType="BIGINT" property="planItemId" />
+        <result column="t__project_code" jdbcType="VARCHAR" property="projectCode" />
+        <result column="t__execute_status" jdbcType="CHAR" property="executeStatus" />
+        <result column="t__plan_month" jdbcType="DATE" property="planMonth" />
+        <result column="t__project_account" jdbcType="VARCHAR" property="projectAccount" />
+        <result column="t__project_name" jdbcType="VARCHAR" property="projectName" />
+        <result column="t__project_type" jdbcType="VARCHAR" property="projectType" />
+        <result column="t__station_line_name" jdbcType="LONGVARCHAR" property="stationLineName" />
+        <result column="t__cos_device" jdbcType="LONGVARCHAR" property="cosDevice" />
+        <result column="t__start_time" jdbcType="DATE" property="startTime" />
+        <result column="t__end_time" jdbcType="DATE" property="endTime" />
+        <result column="t__job_content" jdbcType="LONGVARCHAR" property="jobContent" />
+        <result column="t__construction_team" jdbcType="VARCHAR" property="constructionTeam" />
+        <result column="t__update_date" jdbcType="VARCHAR" property="updateDate" />
+        <result column="t__version" jdbcType="BIGINT" property="version" />
+    </resultMap>
+
+    <select id="searchPlanChangeAdvanceList"
+            parameterType="com.tecpie.platform.notice.api.command.query.PlanItemAdvanceQueryCommand"
+            resultMap="PlanChangeResultMap">
+        select
+            main.id AS t__plan_item_id, main.project_code AS t__project_code, main.execute_status AS t__execute_status,
+            main.project_account AS t__project_account, main.project_name AS t__project_name,main.project_type AS t__project_type,
+            main.station_line_name AS t__station_line_name, main.cos_device AS t__cos_device, main.start_time AS t__start_time,
+            main.end_time AS t__end_time, main.job_content AS t__job_content, main.construction_team AS t__construction_team,
+            main.version as t__version, plan.plan_month AS t__plan_month, main.update_date as t__update_date
+        from
+            t_plan_item main
+            LEFT JOIN t_plan plan ON main.plan_id = plan.id
+        where
+            main.deleted = 0
+            AND main.execute_status IN ('020')
+            AND main.version &gt; 1
+        <if test = "condition.projectType != null and condition.projectType != ''">
+            AND main.project_type like CONCAT('%',#{condition.projectType,jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.constructionTeam != null and condition.constructionTeam != ''">
+            AND main.construction_team like CONCAT('%',#{condition.constructionTeam, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.stationLineName != null and condition.stationLineName != ''">
+            AND main.station_line_name like CONCAT('%',#{condition.stationLineName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.jobContent != null and condition.jobContent != ''">
+            AND main.job_content like CONCAT('%',#{condition.jobContent, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.planMonth != null and condition.planMonth != ''">
+            AND DATE_FORMAT(plan.plan_month, '%Y-%m') = #{condition.planMonth}
+        </if>
+        <if test = "condition.startDateBegin != null">
+            AND main.start_time &gt;= #{condition.startDateBegin}
+        </if>
+        <if test = "condition.startDateEnd != null">
+            AND main.start_time &lt;= #{condition.startDateEnd}
+        </if>
+        <if test = "condition.endDateBegin != null">
+            AND main.end_time &gt;= #{condition.endDateBegin}
+        </if>
+        <if test = "condition.endDateEnd != null">
+            AND main.end_time &lt;= #{condition.endDateEnd}
+        </if>
+        order by main.start_time desc
+    </select>
+
+    <sql id="Task_Where_Sql">
+        <if test = "condition.taskCode != null and condition.taskCode != ''">
+            AND task.task_code like CONCAT('%',#{condition.taskCode, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.startDateBegin != null">
+            AND task.start_time &gt;= #{condition.startDateBegin}
+        </if>
+        <if test = "condition.startDateEnd != null">
+            AND task.start_time &lt;= #{condition.startDateEnd}
+        </if>
+        <if test = "condition.endDateBegin != null">
+            AND task.end_time &gt;= #{condition.endDateBegin}
+        </if>
+        <if test = "condition.endDateEnd != null">
+            AND task.end_time &lt;= #{condition.endDateEnd}
+        </if>
+    </sql>
+
+    <!-- 运方下达分险预警 -->
+    <resultMap id="CarrierReleaseResultMap" type="com.tecpie.platform.notice.entity.CarrierReleaseAdvanceNotice">
+        <result column="t__task_id" jdbcType="BIGINT" property="taskId" />
+        <result column="t__task_code" jdbcType="VARCHAR" property="taskCode" />
+        <result column="t__start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="t__end_time" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="t__confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+        <result column="t__type" jdbcType="BIT" property="type" />
+        <result column="t__station_name" jdbcType="VARCHAR" property="stationName" />
+        <result column="t__line_name" jdbcType="VARCHAR" property="lineName" />
+        <result column="t__device_name" jdbcType="VARCHAR" property="deviceName" />
+        <result column="t__ranges" jdbcType="VARCHAR" property="ranges" />
+        <result column="t__reason" jdbcType="BIT" property="reason" />
+        <result column="t__location" jdbcType="VARCHAR" property="location" />
+        <result column="t__job_content" jdbcType="VARCHAR" property="jobContent" />
+        <result column="t__unassigned_qty" jdbcType="INTEGER" property="unassignedQty" />
+        <result column="t__assigned_qty" jdbcType="INTEGER" property="assignedQty" />
+        <result column="t__cancelled_qty" jdbcType="INTEGER" property="cancelledQty" />
+        <result column="t__rejected_qty" jdbcType="INTEGER" property="rejectedQty" />
+        <result column="t__agreed_qty" jdbcType="INTEGER" property="agreedQty" />
+        <result column="t__unsigned_qty" jdbcType="INTEGER" property="unsignedQty" />
+        <result column="t__execute_status" jdbcType="BIGINT" property="executeStatus" />
+        <result column="t__version" jdbcType="BIGINT" property="version" />
+    </resultMap>
+
+    <select id="searchCarrierReleaseAdvanceList" parameterType="com.tecpie.platform.notice.api.command.query.TaskAdvanceQueryCommand" resultMap="CarrierReleaseResultMap">
+        select
+            task.id as t__task_id, task.task_code as t__task_code, task.start_time as t__start_time, task.end_time as t__end_time, task.confirm_time as t__confirm_time,
+            task.type as t__type, task.station_name as t__station_name, task.line_name as t__line_name, task.device_name as t__device_name, task.ranges as t__ranges,
+            task.reason as t__reason, task.location as t__location, task.job_content as t__job_content, task.unassigned_qty as t__unassigned_qty, task.assigned_qty as t__assigned_qty,
+            task.cancelled_qty as t__cancelled_qty, task.rejected_qty as t__rejected_qty, task.agreed_qty as t__agreed_qty, task.unsigned_qty as t__unsigned_qty, es.execute_status as t__execute_status, task.version as t__version
+        from
+            t_task task
+            LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+        where
+            task.deleted = 0
+            AND es.execute_status in ('130')
+            AND DATEDIFF(task.start_time, task.confirm_time) &lt;= (select days from t_task_advance_rule where rule_code = 'GZ0000001')
+        <if test = "condition.deviceName != null and condition.deviceName != ''">
+            AND task.device_name like CONCAT('%',#{condition.deviceName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.ranges != null and condition.ranges != ''">
+            AND task.ranges like CONCAT('%',#{condition.ranges, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.jobContent != null and condition.jobContent != ''">
+            AND task.job_content like CONCAT('%',#{condition.jobContent, jdbcType=VARCHAR},'%')
+        </if>
+        <include refid="Task_Where_Sql"/>
+        order by task.confirm_time desc
+    </select>
+
+    <!-- 用户下达超时预警 -->
+    <resultMap id="ReleaseTimeOutResultMap" type="com.tecpie.platform.notice.entity.ReleaseTimeOutAdvanceNotice">
+        <result column="t__task_user_id" jdbcType="BIGINT" property="taskUserId" />
+        <result column="t__receipt_code" jdbcType="VARCHAR" property="receiptCode" />
+        <result column="t__account_number" jdbcType="VARCHAR" property="accountNumber" />
+        <result column="t__customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="t__customer_address" jdbcType="VARCHAR" property="customerAddress" />
+        <result column="t__phone" jdbcType="VARCHAR" property="phone" />
+        <result column="t__user_type" jdbcType="BIT" property="userType" />
+        <result column="t__user_priority" jdbcType="BIT" property="userPriority" />
+        <result column="t__bool_short_time" jdbcType="BIT" property="boolShortTime" />
+        <result column="t__region" jdbcType="VARCHAR" property="region" />
+        <result column="t__assign_status" jdbcType="CHAR" property="assignStatus" />
+        <result column="t__feedback_status" jdbcType="CHAR" property="feedbackStatus" />
+        <result column="t__feedback_time" jdbcType="TIMESTAMP" property="feedbackTime" />
+        <result column="t__cancel_assign_status" jdbcType="CHAR" property="cancelAssignStatus" />
+        <result column="t__cancel_feedback_status" jdbcType="CHAR" property="cancelFeedbackStatus" />
+        <result column="t__task_id" jdbcType="BIGINT" property="taskId" />
+        <result column="t__task_code" jdbcType="VARCHAR" property="taskCode" />
+        <result column="t__start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="t__end_time" jdbcType="TIMESTAMP" property="endTime" />
+    </resultMap>
+
+    <select id="searchReleaseTimeOutAdvanceList" parameterType="com.tecpie.platform.notice.api.command.query.TaskUserAdvanceQueryCommand" resultMap="ReleaseTimeOutResultMap">
+        select
+            main.id as t__task_user_id, main.receipt_code as t__receipt_code, main.account_number as t__account_number, main.customer_name as t__customer_name, main.customer_address as t__customer_address, main.phone as t__phone,
+            main.user_type as t__user_type, main.user_priority as t__user_priority, main.bool_short_time as t__bool_short_time, main.region as t__region, main.assign_status as t__assign_status,
+            main.feedback_status as t__feedback_status, main.feedback_time AS t__feedback_time, main.cancel_assign_status as t__cancel_assign_status, main.cancel_feedback_status as t__cancel_feedback_status,
+            task.id as t__task_id, task.task_code as t__task_code, task.start_time as t__start_time, task.end_time as t__end_time
+        from
+            t_task_user main
+            LEFT JOIN t_task task ON main.task_id = task.id
+            LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+        where
+            main.deleted = 0
+            AND main.assign_status = '220'
+            AND main.feedback_status = '310'
+            AND es.execute_status = '130'
+            and DATE(now()) &gt; DATE_SUB(task.start_time, INTERVAL (select days from t_task_advance_rule where rule_code = 'GZ0000002') DAY)
+        <if test = "condition.receiptCode != null and condition.receiptCode != ''">
+            AND main.receipt_code like CONCAT('%',#{condition.receiptCode, jdbcType=VARCHAR},'%')
+        </if>
+        <include refid="Task_Where_Sql"/>
+        order by
+            main.assign_time desc
+    </select>
+
+    <!-- 用户拒签预警 -->
+    <resultMap id="UserRejectResultMap" type="com.tecpie.platform.notice.entity.UserRejectAdvanceNotice">
+        <result column="t__task_user_id" jdbcType="BIGINT" property="taskUserId" />
+        <result column="t__receipt_code" jdbcType="VARCHAR" property="receiptCode" />
+        <result column="t__account_number" jdbcType="VARCHAR" property="accountNumber" />
+        <result column="t__customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="t__customer_address" jdbcType="VARCHAR" property="customerAddress" />
+        <result column="t__phone" jdbcType="VARCHAR" property="phone" />
+        <result column="t__user_type" jdbcType="BIT" property="userType" />
+        <result column="t__user_priority" jdbcType="BIT" property="userPriority" />
+        <result column="t__bool_short_time" jdbcType="BIT" property="boolShortTime" />
+        <result column="t__region" jdbcType="VARCHAR" property="region" />
+        <result column="t__assign_status" jdbcType="CHAR" property="assignStatus" />
+        <result column="t__feedback_status" jdbcType="CHAR" property="feedbackStatus" />
+        <result column="t__feedback_time" jdbcType="TIMESTAMP" property="feedbackTime" />
+        <result column="t__cancel_assign_status" jdbcType="CHAR" property="cancelAssignStatus" />
+        <result column="t__cancel_feedback_status" jdbcType="CHAR" property="cancelFeedbackStatus" />
+        <result column="t__task_id" jdbcType="BIGINT" property="taskId" />
+        <result column="t__task_code" jdbcType="VARCHAR" property="taskCode" />
+        <result column="t__start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="t__end_time" jdbcType="TIMESTAMP" property="endTime" />
+    </resultMap>
+
+    <select id="searchUserRejectAdvanceList" parameterType="com.tecpie.platform.notice.api.command.query.TaskUserAdvanceQueryCommand" resultMap="UserRejectResultMap">
+        select
+            main.id as t__task_user_id, main.receipt_code as t__receipt_code, main.account_number as t__account_number, main.customer_name as t__customer_name, main.customer_address as t__customer_address, main.phone as t__phone,
+            main.user_type as t__user_type, main.user_priority as t__user_priority, main.bool_short_time as t__bool_short_time, main.region as t__region, main.assign_status as t__assign_status,
+            main.feedback_status as t__feedback_status, main.feedback_time AS t__feedback_time, main.cancel_assign_status as t__cancel_assign_status, main.cancel_feedback_status as t__cancel_feedback_status,
+            task.id as t__task_id, task.task_code as t__task_code, task.start_time as t__start_time, task.end_time as t__end_time
+        from
+            t_task_user main
+            LEFT JOIN t_task task ON main.task_id = task.id
+            LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+        where
+            main.deleted = 0
+            AND main.feedback_status = '330'
+            AND es.execute_status IN ('130')
+        <if test = "condition.receiptCode != null and condition.receiptCode != ''">
+            AND main.receipt_code like CONCAT('%',#{condition.receiptCode, jdbcType=VARCHAR},'%')
+        </if>
+        <include refid="Task_Where_Sql"/>
+        order by main.feedback_time desc
+    </select>
+
+    <!-- 用户重复停电预警 -->
+    <resultMap id="RepeatPowerCutResultMap" type="com.tecpie.platform.notice.entity.RepeatPowerCutAdvanceNotice">
+        <result column="t__task_user_id" jdbcType="BIGINT" property="taskUserId" />
+        <result column="t__receipt_code" jdbcType="VARCHAR" property="receiptCode" />
+        <result column="t__account_number" jdbcType="VARCHAR" property="accountNumber" />
+        <result column="t__electrical_number" jdbcType="VARCHAR" property="electricalNumber" />
+        <result column="t__voltage_level" jdbcType="VARCHAR" property="voltageLevel" />
+        <result column="t__customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="t__customer_address" jdbcType="VARCHAR" property="customerAddress" />
+        <result column="t__phone" jdbcType="VARCHAR" property="phone" />
+        <result column="t__user_type" jdbcType="BIT" property="userType" />
+        <result column="t__user_priority" jdbcType="BIT" property="userPriority" />
+        <result column="t__bool_short_time" jdbcType="BIT" property="boolShortTime" />
+        <result column="t__region" jdbcType="VARCHAR" property="region" />
+        <result column="t__bool_repeat_power_cut" jdbcType="BIT" property="boolRepeatPowerCut" />
+        <result column="t__last_power_cut_time" jdbcType="TIMESTAMP" property="lastPowerCutTime" />
+        <result column="t__task_id" jdbcType="BIGINT" property="taskId" />
+        <result column="t__task_code" jdbcType="VARCHAR" property="taskCode" />
+        <result column="t__start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="t__end_time" jdbcType="TIMESTAMP" property="endTime" />
+    </resultMap>
+
+    <select id="searchRepeatPowerCutAdvanceList" parameterType="com.tecpie.platform.notice.api.command.query.TaskUserAdvanceQueryCommand" resultMap="RepeatPowerCutResultMap">
+        select
+            main.id as t__task_user_id, main.receipt_code as t__receipt_code, main.account_number as t__account_number, main.electrical_number as t__electrical_number, main.voltage_level as t__voltage_level,
+            main.customer_name as t__customer_name, main.customer_address as t__customer_address, main.phone as t__phone, main.user_type as t__user_type, main.user_priority as t__user_priority,
+            main.bool_repeat_power_cut as t__bool_repeat_power_cut, main.last_power_cut_time as t__last_power_cut_time, main.bool_short_time as t__bool_short_time, main.region as t__region,
+            task.id as t__task_id, task.task_code as t__task_code, task.start_time as t__start_time, task.end_time as t__end_time
+        from
+            t_task_user main
+            LEFT JOIN t_task task ON main.task_id = task.id
+            LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+        where
+            main.deleted = 0
+            AND main.bool_repeat_power_cut = 1
+        <if test = "condition.receiptCode != null and condition.receiptCode != ''">
+            AND main.receipt_code like CONCAT('%',#{condition.receiptCode, jdbcType=VARCHAR},'%')
+        </if>
+        <include refid="Task_Where_Sql"/>
+        order by task.start_time desc
+    </select>
+
+    <!-- 业务告警数据Map -->
+    <resultMap id="AlarmResultMap" type="com.tecpie.platform.notice.entity.BusinessAdvanceNotice">
+        <result column="business_type" jdbcType="BIT" property="businessType" />
+        <result column="alarm_type" jdbcType="BIT" property="alarmType" />
+        <result column="alarm_time" jdbcType="TIMESTAMP" property="alarmTime" />
+        <result column="alarm_title" jdbcType="VARCHAR" property="alarmTitle" />
+        <result column="business_id" jdbcType="BIGINT" property="businessId" />
+        <result column="business_code" jdbcType="VARCHAR" property="businessCode" />
+        <result column="business_content" jdbcType="VARCHAR" property="businessContent" />
+        <result column="receipt_code" jdbcType="VARCHAR" property="receiptCode" />
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    </resultMap>
+
+    <select id="selectAlarmBusinessList"
+            parameterType="com.tecpie.platform.notice.api.command.query.BusinessAdvanceQueryCommand"
+            resultMap="AlarmResultMap">
+        select * from (
+            select
+                '3' as business_type, '5' as alarm_type, '计划变更预警' as alarm_title, main.start_time, main.end_time,
+                main.id AS business_id, main.project_code AS business_code, main.project_name AS business_content,NULL AS receipt_code,
+                main.create_date as alarm_time, main.deleted
+            from
+                t_plan_item main
+                LEFT JOIN t_plan plan ON main.plan_id = plan.id
+            where
+                main.deleted = 0
+            AND main.execute_status IN ('020')
+            AND main.version &gt; 1
+        union
+            select
+                '1' as business_type, '2' as alarm_type, '下达风险预警' as alarm_title, task.start_time, task.end_time,
+                task.id AS business_id, task.task_code AS business_code, task.job_content AS business_content,NULL AS receipt_code,
+                task.confirm_time as alarm_time, task.deleted
+            from
+                t_task task
+                LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+            where
+                task.deleted = 0
+            AND es.execute_status in ('130')
+            AND DATEDIFF(task.start_time, task.confirm_time) &lt; (select days from t_task_advance_rule where rule_code = 'GZ0000001')
+        union
+            select
+                '2' as business_type, '1' as alarm_type, '下达超时预警' as alarm_title, task.start_time, task.end_time,
+                main.id AS business_id, main.customer_name AS business_code, task.task_code AS business_content, main.receipt_code as  receipt_code,
+                main.assign_time as alarm_time, main.deleted
+            from
+                t_task_user main
+                LEFT JOIN t_task task ON main.task_id = task.id
+                LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+            where
+                main.deleted = 0
+            AND main.assign_status = '220'
+            AND main.feedback_status = '310'
+            AND es.execute_status = '130'
+            AND DATE(now()) &gt; DATE_SUB(task.start_time, INTERVAL (select days from t_task_advance_rule where rule_code = 'GZ0000002') DAY)
+        union
+            select
+                '2' as business_type, '3' as alarm_type, '用户拒签告警' as alarm_title, task.start_time, task.end_time,
+                main.id AS business_id, main.customer_name AS business_code, task.task_code AS business_content, main.receipt_code as  receipt_code,
+                main.feedback_time as alarm_time, main.deleted
+            from
+                t_task_user main
+                LEFT JOIN t_task task ON main.task_id = task.id
+                LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+            where
+                main.deleted = 0
+                AND main.feedback_status = '330'
+                AND es.execute_status IN ('130')
+        union
+            select
+                '2' as business_type, '4' as alarm_type, '重复停电预警' as alarm_title, task.start_time, task.end_time,
+                main.id AS business_id, main.customer_name AS business_code, task.task_code AS business_content,  main.receipt_code as  receipt_code,
+                main.create_date as alarm_time, main.deleted
+            from
+                t_task_user main
+                LEFT JOIN t_task task ON main.task_id = task.id
+                LEFT JOIN t_task_execute_status es ON task.execute_status_id = es.id
+            where
+                main.deleted = 0
+            AND es.execute_status IN ('130')
+            AND main.bool_repeat_power_cut = 1
+        ) t
+        where
+            t.deleted = 0
+        <if test = "condition.alarmType != null">
+            AND t.alarm_type = #{condition.alarmType, jdbcType=BIT}
+        </if>
+        <if test = "condition.alarmTitle != null and condition.alarmTitle != ''">
+            AND t.alarm_title like CONCAT('%',#{condition.alarmTitle, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.alarmContent != null and condition.alarmContent != ''">
+            AND t.business_content like CONCAT('%',#{condition.alarmContent, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.businessCode != null and condition.businessCode != ''">
+            AND t.business_code like CONCAT('%',#{condition.businessCode, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.alarmTimeBegin != null">
+            AND t.alarm_time &gt;= #{condition.alarmTimeBegin}
+        </if>
+        <if test = "condition.alarmTimeEnd != null">
+            AND t.alarm_time &lt;= #{condition.alarmTimeEnd}
+        </if>
+        order by t.alarm_time desc
+    </select>
+
+    <!-- 统计告警数量 -->
+    <select id="selectAlarmTotal" resultType="java.lang.Integer">
+        select
+            count(id) as count
+        from
+            t_task_advance_notice main
+        where
+            main.deleted = 0 and main.status = 1 and main.alarm_type = #{alarmType}
+            and alarm_time &gt;= #{alarmTime}
+    </select>
+</mapper>

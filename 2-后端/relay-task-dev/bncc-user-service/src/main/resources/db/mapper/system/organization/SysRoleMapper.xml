@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.organization.mapper.SysRoleMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.organization.entity.SysRole">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__code" jdbcType="VARCHAR" property="code" />
+    <result column="main__name" jdbcType="VARCHAR" property="name" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="INTEGER" property="status" />
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+
+    <collection property="userList" ofType="com.tecpie.platform.user.business.system.organization.entity.SysUser">
+      <id column="user_id" property="id" jdbcType="BIGINT"/>
+      <result column="user_code" property="code" jdbcType="VARCHAR" />
+      <result column="user_name" property="name" jdbcType="VARCHAR" />
+      <result column="user_remark" jdbcType="VARCHAR" property="remark" />
+      <result column="user_status" jdbcType="INTEGER" property="status" />
+      <result column="user_work_number" jdbcType="VARCHAR" property="workNumber" />
+      <result column="user_sex" jdbcType="VARCHAR" property="sex" />
+      <result column="user_position" jdbcType="VARCHAR" property="position" />
+      <result column="user_headimgurl" jdbcType="VARCHAR" property="headimgurl" />
+      <result column="user_telephone" jdbcType="VARCHAR" property="telephone" />
+      <result column="user_mobile" jdbcType="VARCHAR" property="mobile" />
+      <result column="user_email" jdbcType="VARCHAR" property="email" />
+      <result column="user_birth_date" jdbcType="TIMESTAMP" property="birthDate" />
+      <result column="user_entry_date" jdbcType="TIMESTAMP" property="entryDate" />
+      <result column="user_work_date" jdbcType="TIMESTAMP" property="workDate" />
+      <result column="user_rev" jdbcType="INTEGER" property="rev" />
+      <result column="user_first" jdbcType="VARCHAR" property="first" />
+      <result column="user_last" jdbcType="VARCHAR" property="last" />
+    </collection>
+    <collection property="permissionList"
+      ofType="com.tecpie.platform.user.business.system.function.entity.SysPermission">
+      <id column="permission_id" property="id" jdbcType="BIGINT"/>
+      <result column="resource_id" jdbcType="BIGINT" property="resourceId"/>
+      <result column="operation_id" jdbcType="BIGINT" property="operationId"/>
+      <result column="permission_code" jdbcType="VARCHAR" property="permissionCode"/>
+      <result column="permission_remark" jdbcType="VARCHAR" property="remark"/>
+      <result column="permission_status" jdbcType="INTEGER" property="status"/>
+    </collection>
+  </resultMap>
+
+  <resultMap id="UserResultMap" type="com.tecpie.platform.user.business.system.organization.entity.SysRole">
+    <id column="main__id" jdbcType="BIGINT" property="id"/>
+    <result column="main__code" jdbcType="VARCHAR" property="code"/>
+    <result column="main__name" jdbcType="VARCHAR" property="name"/>
+    <result column="main__remark" jdbcType="VARCHAR" property="remark"/>
+    <result column="main__status" jdbcType="INTEGER" property="status"/>
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted"/>
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy"/>
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy"/>
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+    <result column="main__user_id" jdbcType="BIGINT" property="userId"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    main.id as main__id, main.code as main__code, main.name as main__name, main.remark as
+    main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as
+    main__create_by, main.create_date as main__create_date, main.update_by as main__update_by,
+    main.update_date as main__update_date
+  </sql>
+  <sql id="User_Column_List">
+    user.id as user_id, user.code as user_code, user.name as user_name, user.work_number as
+    user_work_number, user.sex as user_sex, user.position as user_position, user.headimgurl as
+    user_headimgurl, user.telephone as user_telephone, user.mobile as user_mobile, user.email as
+    user_email, user.birth_date as user_birth_date, user.entry_date as user_entry_date,
+    user.work_date as user_work_date, user.rev as user_rev, user.first as user_first, user.last as
+    user_last, user.remark as user_remark, user.status as user_status
+  </sql>
+  <sql id="Permission_Column_List">
+    permission.id as permission_id, permission.operation_id, permission.resource_id,
+    permission.permission_code, permission.remark as permission_remark, permission.status as
+    permission_status
+  </sql>
+
+  <sql id="Column_List_Page_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+  <sql id="Column_List_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+
+  <select id="searchExtensionPageList"
+    parameterType="com.tecpie.platform.user.business.organization.api.command.query.SysRoleQueryCommand"
+    resultMap="BaseResultMap">
+    select
+    <include refid="Column_List_Page_Combine"/>,<include refid="User_Column_List"/>,
+    <include refid="Permission_Column_List"/>
+    from sys_role main
+    left join sys_user_role user_role on main.id = user_role.role_id and user_role.deleted = 0
+    left join sys_user user on user_role.user_id = user.id and user.deleted = 0
+    left join sys_role_permission role_permission on main.id = role_permission.role_id and
+    role_permission.deleted = 0
+    left join sys_permission permission on role_permission.permission_id = permission.id and
+    permission.deleted = 0
+    where main.deleted = 0
+    <!-- 在此处添加自定义筛选条件 -->
+    <if test="condition.code != null">
+      AND main.code LIKE CONCAT('%',#{condition.code},'%')
+    </if>
+    <if test="condition.name != null">
+      AND main.name LIKE CONCAT('%',#{condition.name},'%')
+    </if>
+    <if test="condition.status != null">
+      AND main.status = #{condition.status, jdbcType=BIGINT}
+    </if>
+  </select>
+
+  <select id="selectExtensionById" resultMap="BaseResultMap">
+    select
+    <include refid="Column_List_Combine"/>,<include refid="User_Column_List"/>,
+    <include refid="Permission_Column_List"/>
+    from sys_role main
+    left join sys_user_role user_role on main.id = user_role.role_id and user_role.deleted = 0
+    left join sys_user user on user_role.user_id = user.id and user.deleted = 0
+    left join sys_role_permission role_permission on main.id = role_permission.role_id and
+    role_permission.deleted = 0
+    left join sys_permission permission on role_permission.permission_id = permission.id and
+    permission.deleted = 0
+    where main.deleted = 0 and main.id = #{id}
+  </select>
+
+  <select id="listByUserIdList" parameterType="list" resultMap="UserResultMap">
+    SELECT
+    t1.user_id as main__user_id,
+    <include refid="Column_List_Combine"/>
+    FROM sys_role AS main
+    LEFT JOIN sys_user_role AS t1
+    ON main.id = t1.role_id AND t1.deleted = 0
+    WHERE main.deleted = 0
+    <if test="userIdList != null and userIdList.size() > 0">
+      AND t1.user_id in
+      <foreach collection="userIdList" item="userId" open="(" close=")" separator=",">
+        #{userId}
+      </foreach>
+    </if>
+  </select>
+</mapper>

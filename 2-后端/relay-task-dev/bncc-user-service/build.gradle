@@ -1,0 +1,25 @@
+plugins {
+  id "jacoco"
+  id "org.springframework.boot" version "2.3.12.RELEASE"
+}
+
+jar.enabled=true
+bootJar.enabled=false
+
+dependencies {
+  implementation "com.tecpie.base:tecpie-webmvc-starter"
+  implementation "com.tecpie.base:tecpie-security-starter"
+  // 如果是微服务架构，需要使用Redis，则引入 com.tecpie.base:tecpie-data-redis-starter 依赖
+  // implementation "com.tecpie.base:tecpie-data-redis-starter"
+  implementation "com.tecpie.base:tecpie-data-jdbc-starter"
+  // 如果项目中不需要引入框架的代码自动生成，则不需要引入 com.tecpie.base:tecpie-code-generator 依赖
+  // implementation "com.tecpie.base:tecpie-code-generator"
+
+  // 如果是微服务，则需要引入 com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery、com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config 依赖
+  // implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery"
+  // implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config"
+
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+  implementation project(path: ':bncc-user-api')
+}

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.ReceiveDurationStatisticsMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.ReceiveDurationStatistics">
+      <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+      <result column="main__task_id" jdbcType="BIGINT" property="taskId" />
+      <result column="main__receipt_code" jdbcType="VARCHAR" property="receiptCode" />
+      <result column="main__start_time" jdbcType="TIMESTAMP" property="startTime" />
+      <result column="main__account_number" jdbcType="VARCHAR" property="accountNumber" />
+      <result column="main__customer_name" jdbcType="VARCHAR" property="customerName" />
+      <result column="main__user_type" jdbcType="BIT" property="userType" />
+      <result column="main__region" jdbcType="VARCHAR" property="region" />
+      <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+      <result column="main__assign_time" jdbcType="TIMESTAMP" property="assignTime" />
+      <result column="main__feedback_time" jdbcType="TIMESTAMP" property="feedbackTime" />
+      <result column="main__hour_days" property="hourDays" />
+    </resultMap>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.ReceiveDurationQueryCommand" resultMap="BaseResultMap">
+        select
+            main.id as main__id, main.receipt_code as main__receipt_code, main.account_number as main__account_number,
+            main.customer_name as main__customer_name, main.user_type as main__user_type, main.region as main__region,
+            main.assign_time as main__assign_time, task.id as main__task_id, task.task_code as main__task_code, task.start_time as main__start_time
+        from
+            t_task_user main
+            left join t_task task on task.id = main.task_id
+            left join t_task_execute_status es on es.id = task.execute_status_id
+        where
+        main.deleted = 0
+        AND main.assign_status = '230'
+        AND main.feedback_status in ('320', '330')
+        AND es.execute_status in ('130', '140', '161')
+<!--        <if test = "condition.feedbackTimeBegin != null">-->
+<!--            AND main.feedback_time &gt;= #{condition.feedbackTimeBegin}-->
+<!--        </if>-->
+<!--        <if test = "condition.feedbackTimeEnd != null">-->
+<!--            AND main.feedback_time &lt;= #{condition.feedbackTimeEnd}-->
+<!--        </if>-->
+        <if test = "condition.startDateBegin != null">
+            AND task.start_time &gt;= #{condition.startDateBegin}
+        </if>
+        <if test = "condition.startDateEnd != null">
+            AND task.start_time &lt;= #{condition.startDateEnd}
+        </if>
+        <if test = "condition.taskCode != null and condition.taskCode != ''">
+            AND task.task_code like CONCAT('%',#{condition.taskCode, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.region != null and condition.region != ''">
+            AND main.region like CONCAT('%',#{condition.region, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.userType != null">
+            AND main.user_type = #{condition.userType}
+        </if>
+    </select>
+
+</mapper>

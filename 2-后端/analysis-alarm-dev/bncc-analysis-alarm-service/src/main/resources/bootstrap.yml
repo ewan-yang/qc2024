@@ -1,0 +1,29 @@
+server:
+  port: ${SERVER_PORT:18082}
+jasypt:
+  encryptor:
+    bootstrap: false
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: analysis-alarm-service
+  profiles:
+    active: ${PROFILE_NAME:local}
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${spring.profiles.active}
+        server-addr: ${NACOS_ADDR:172.16.0.23:8848}
+      config:
+        file-extension: yml
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+  messages:
+    basename: i18n/message
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      id-type: AUTO

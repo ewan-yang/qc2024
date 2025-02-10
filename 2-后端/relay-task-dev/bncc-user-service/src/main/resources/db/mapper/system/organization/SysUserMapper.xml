@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.organization.mapper.SysUserMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.organization.entity.SysUser">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__code" jdbcType="VARCHAR" property="code" />
+    <result column="main__name" jdbcType="VARCHAR" property="name" />
+    <result column="main__work_number" jdbcType="VARCHAR" property="workNumber" />
+    <result column="main__password" jdbcType="VARCHAR" property="password" />
+    <result column="main__sex" jdbcType="VARCHAR" property="sex" />
+    <result column="main__position" jdbcType="VARCHAR" property="position" />
+    <result column="main__engineers_team_id" jdbcType="BIGINT" property="engineersTeamId"/>
+    <result column="main__audit_type" jdbcType="VARCHAR" property="auditType" />
+    <result column="main__headimgurl" jdbcType="VARCHAR" property="headimgurl" />
+    <result column="main__telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="main__mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="main__email" jdbcType="VARCHAR" property="email" />
+    <result column="main__password_date" jdbcType="TIMESTAMP" property="passwordDate" />
+    <result column="main__birth_date" jdbcType="TIMESTAMP" property="birthDate" />
+    <result column="main__entry_date" jdbcType="TIMESTAMP" property="entryDate" />
+    <result column="main__work_date" jdbcType="TIMESTAMP" property="workDate" />
+    <result column="main__ip_range" jdbcType="VARCHAR" property="ipRange" />
+    <result column="main__login_fail_ip" jdbcType="VARCHAR" property="loginFailIp" />
+    <result column="main__login_fail_date" jdbcType="TIMESTAMP" property="loginFailDate" />
+    <result column="main__login_flag" jdbcType="INTEGER" property="loginFlag" />
+    <result column="main__login_success_date" jdbcType="TIMESTAMP" property="loginSuccessDate" />
+    <result column="main__login_success_ip" jdbcType="VARCHAR" property="loginSuccessIp" />
+    <result column="main__lock_date" jdbcType="TIMESTAMP" property="lockDate" />
+    <result column="main__token" jdbcType="VARCHAR" property="token" />
+    <result column="main__login_fail_count" jdbcType="INTEGER" property="loginFailCount" />
+    <result column="main__rev" jdbcType="INTEGER" property="rev" />
+    <result column="main__first" jdbcType="VARCHAR" property="first" />
+    <result column="main__last" jdbcType="VARCHAR" property="last" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="INTEGER" property="status" />
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy"/>
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+
+    <collection property="roleList"
+      ofType="com.tecpie.platform.user.business.system.organization.entity.SysRole">
+      <id column="role_id" property="id" jdbcType="BIGINT" />
+      <result column="role_code" property="code" jdbcType="VARCHAR"/>
+      <result column="role_name" property="name" jdbcType="VARCHAR"/>
+      <result column="role_remark" jdbcType="VARCHAR" property="remark"/>
+      <result column="role_status" jdbcType="INTEGER" property="status"/>
+    </collection>
+    <collection property="permissionList"
+      ofType="com.tecpie.platform.user.business.system.function.entity.SysPermission">
+      <id column="permission_id" property="id" jdbcType="BIGINT"/>
+      <result column="resource_id" jdbcType="BIGINT" property="resourceId"/>
+      <result column="operation_id" jdbcType="BIGINT" property="operationId"/>
+      <result column="permission_code" jdbcType="VARCHAR" property="permissionCode"/>
+      <result column="permission_remark" jdbcType="VARCHAR" property="remark"/>
+      <result column="permission_status" jdbcType="INTEGER" property="status"/>
+    </collection>
+    <collection property="unitList"
+      ofType="com.tecpie.platform.user.business.system.organization.entity.SysUnit">
+      <id column="unit_id" property="id" jdbcType="BIGINT"/>
+      <result column="unit_code" property="code" jdbcType="VARCHAR"/>
+      <result column="unit_name" property="name" jdbcType="VARCHAR"/>
+    </collection>
+  </resultMap>
+
+  <resultMap id="SecurityMap" type="com.tecpie.starter.feign.entity.SecurityUser">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__code" jdbcType="VARCHAR" property="code"/>
+    <result column="main__name" jdbcType="VARCHAR" property="name"/>
+    <result column="main__work_number" jdbcType="VARCHAR" property="workNumber"/>
+    <result column="main__sex" jdbcType="VARCHAR" property="sex"/>
+    <result column="main__mobile" jdbcType="VARCHAR" property="mobile"/>
+    <result column="main__email" jdbcType="VARCHAR" property="email"/>
+    <result column="main__token" jdbcType="VARCHAR" property="token"/>
+    <result column="main__status" property="status"/>
+    <collection property="roleList"
+      ofType="com.tecpie.starter.feign.entity.SecurityRole">
+      <id column="role_id" property="id" jdbcType="BIGINT" />
+      <result column="role_code" property="code" jdbcType="VARCHAR"/>
+      <result column="role_name" property="name" jdbcType="VARCHAR"/>
+    </collection>
+    <collection property="permissionList"
+      ofType="com.tecpie.starter.feign.entity.SecurityPermission">
+      <id column="permission_id" property="id" jdbcType="BIGINT"/>
+      <result column="permission_code" jdbcType="VARCHAR" property="code"/>
+    </collection>
+    <collection property="unitList"
+      ofType="com.tecpie.starter.feign.entity.SecurityUnit">
+      <id column="unit_id" property="id" jdbcType="BIGINT"/>
+      <result column="unit_code" property="code" jdbcType="VARCHAR"/>
+      <result column="unit_name" property="name" jdbcType="VARCHAR"/>
+      <result column="unit_type" property="type"/>
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    main.id as main__id, main.code as main__code, main.name as main__name, main.work_number as
+    main__work_number, main.sex as main__sex, main.position as main__position, main.engineers_team_id as main__engineers_team_id,
+    main.audit_type as main__audit_type, main.headimgurl as main__headimgurl,
+    main.telephone as main__telephone, main.mobile as main__mobile, main.email as main__email,
+    main.password_date as main__password_date, main.birth_date as main__birth_date,
+    main.entry_date as main__entry_date, main.work_date as main__work_date, main.ip_range as
+    main__ip_range, main.login_fail_ip as main__login_fail_ip, main.login_fail_date as
+    main__login_fail_date, main.login_flag as main__login_flag, main.login_success_date as
+    main__login_success_date, main.login_success_ip as main__login_success_ip, main.lock_date as
+    main__lock_date, main.token as main__token, main.login_fail_count as main__login_fail_count,
+    main.rev as main__rev, main.first as main__first, main.last as main__last, main.remark as
+    main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as
+    main__create_by, main.create_date as main__create_date, main.update_by as main__update_by,
+    main.update_date as main__update_date
+  </sql>
+  <sql id="Role_Column_List">
+    role.id as role_id, role.code as role_code, role.name as role_name, role.remark as role_remark,
+    role.status as role_status
+  </sql>
+  <sql id="Permission_Column_List">
+    permission.id as permission_id, permission.operation_id, permission.resource_id,
+    permission.permission_code, permission.remark as permission_remark, permission.status as
+    permission_status
+  </sql>
+  <sql id="Unit_Column_List">
+    unit.id as unit_id,unit.code AS unit_code,unit.name AS unit_name
+  </sql>
+  <sql id="Column_List_With_Pwd">
+    <include refid="Base_Column_List"/>,main.password as main__password
+  </sql>
+  <sql id="Column_List_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+
+  <select id="searchExtensionPageList"
+    parameterType="com.tecpie.platform.user.business.organization.api.command.query.SysUserQueryCommand"
+    resultMap="BaseResultMap">
+    select
+    <include refid="Column_List_Combine"/>
+    from sys_user main
+    where main.deleted = 0
+    <!-- 在此处添加自定义筛选条件 -->
+    <if test="condition.code != null and condition.code != ''">
+      AND main.code LIKE CONCAT('%',#{condition.code, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="condition.name != null and condition.name != ''">
+      AND main.name like CONCAT('%',#{condition.name, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="condition.status != null">
+      AND main.status = #{condition.status, jdbcType=BIGINT}
+    </if>
+  </select>
+
+  <select id="selectAuthByCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />,
+    <include refid="Column_List_With_Pwd"/>,<include refid="Role_Column_List"/>,
+    <include refid="Permission_Column_List"/>
+    from sys_user main
+    LEFT JOIN sys_user_role user_role on main.id = user_role.user_id and user_role.deleted = 0
+    LEFT JOIN sys_role role on role.id = user_role.role_id and role.deleted = 0
+    LEFT JOIN sys_role_permission role_permission on role.id = role_permission.role_id and
+    role_permission.deleted = 0
+    LEFT JOIN sys_permission permission on role_permission.permission_id = permission.id and
+    permission.deleted = 0
+    where main.deleted = 0 AND main.status = 1 AND main.code = #{code}
+  </select>
+
+  <select id="selectExtensionById" resultMap="BaseResultMap">
+    select
+    <include refid="Column_List_Combine"/>,<include refid="Role_Column_List"/>,
+    <include refid="Permission_Column_List"/>,
+    <include refid="Unit_Column_List"/>
+    from sys_user main
+    LEFT JOIN sys_user_role user_role on main.id = user_role.user_id and user_role.deleted = 0
+    LEFT JOIN sys_role role on role.id = user_role.role_id and role.deleted = 0
+    LEFT JOIN sys_role_permission role_permission on role.id = role_permission.role_id and
+    role_permission.deleted = 0
+    LEFT JOIN sys_permission permission on role_permission.permission_id = permission.id and
+    permission.deleted = 0
+    LEFT JOIN sys_user_unit user_unit on main.id = user_unit.user_id and user_unit.deleted = 0
+    LEFT JOIN sys_unit unit on unit.id = user_unit.unit_id and unit.deleted = 0
+    where main.deleted = 0 and main.id = #{id}
+  </select>
+
+  <select id="selectSecurityUser" resultMap="SecurityMap">
+    select
+    <include refid="Column_List_Combine"/>,<include refid="Role_Column_List"/>,
+    <include refid="Permission_Column_List"/>,
+    <include refid="Unit_Column_List"/>
+    from sys_user main
+    LEFT JOIN sys_user_role user_role on main.id = user_role.user_id and user_role.deleted = 0
+    LEFT JOIN sys_role role on role.id = user_role.role_id and role.deleted = 0
+    LEFT JOIN sys_role_permission role_permission on role.id = role_permission.role_id and
+    role_permission.deleted = 0
+    LEFT JOIN sys_permission permission on role_permission.permission_id = permission.id and
+    permission.deleted = 0
+    LEFT JOIN sys_user_unit user_unit on main.id = user_unit.user_id and user_unit.deleted = 0
+    LEFT JOIN sys_unit unit on unit.id = user_unit.unit_id and unit.deleted = 0
+    where main.deleted = 0 and main.id = #{id}
+  </select>
+
+  <select id="searchListByUnit" resultMap="BaseResultMap">
+    SELECT DISTINCT main.id,
+    <include refid="Base_Column_List"/>
+    FROM sys_user main
+    <if test="condition.unitId != null">
+      LEFT JOIN sys_user_unit user_unit on main.id = user_unit.user_id and user_unit.deleted = 0
+      INNER JOIN sys_unit unit on unit.id = user_unit.unit_id and unit.deleted = 0 AND
+      FIND_IN_SET(#{condition.unitId},unit.relation_path)
+    </if>
+    WHERE main.deleted = 0
+    <if test="condition.code != null and condition.code != ''">
+      AND main.code like CONCAT('%',#{condition.code, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="condition.name != null and condition.name != ''">
+      AND main.name like CONCAT('%',#{condition.name, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="condition.status != null">
+      AND main.status = #{condition.status, jdbcType=BIGINT}
+    </if>
+    <if test="condition.email != null and condition.email != ''">
+      AND main.email like CONCAT('%',#{condition.email, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="condition.mobile != null and condition.mobile != ''">
+      AND main.mobile like CONCAT('%',#{condition.mobile, jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    FROM
+        sys_user main
+    WHERE
+        main.status = 1 AND main.deleted = 0
+    <if test="ids != null and ids.size() > 0">
+      AND main.id in
+      <foreach collection="ids" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+  </select>
+</mapper>

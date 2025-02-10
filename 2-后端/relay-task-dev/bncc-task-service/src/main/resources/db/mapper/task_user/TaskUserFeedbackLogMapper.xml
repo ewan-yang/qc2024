@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.task_user.mapper.TaskUserFeedbackLogMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.task_user.entity.TaskUserFeedbackLog">
+    <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+    <result column="main__task_user_id" jdbcType="BIGINT" property="taskUserId" />
+    <result column="main__feedback_type" jdbcType="BIT" property="feedbackType" />
+    <result column="main__feedback_status" jdbcType="CHAR" property="feedbackStatus" />
+    <result column="main__delivery_method" jdbcType="BIT" property="deliveryMethod" />
+    <result column="main__backup_phone" jdbcType="VARCHAR" property="backupPhone" />
+    <result column="main__rejected_reason" jdbcType="VARCHAR" property="rejectedReason" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.task_user_id as main__task_user_id, main.feedback_type as main__feedback_type, main.feedback_status as main__feedback_status, main.delivery_method as main__delivery_method,
+      main.backup_phone as main__backup_phone, main.rejected_reason as main__rejected_reason, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted,
+      main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.task_user.api.command.query.TaskUserFeedbackLogQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from
+        t_task_user_feedback_log main
+      where
+        main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.taskUserId != null">
+        AND main.task_user_id = #{condition.taskUserId,jdbcType=BIGINT}
+      </if>
+      <if test = "condition.deliveryMethod != null">
+        AND main.delivery_method = #{condition.deliveryMethod,jdbcType=INTEGER}
+      </if>
+      <if test = "condition.feedbackType != null">
+        AND main.feedback_type = #{condition.feedbackType,jdbcType=INTEGER}
+      </if>
+      <if test = "condition.backupPhone != null and condition.backupPhone != ''">
+        AND main.backup_phone like CONCAT('%',#{condition.backupPhone, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.feedbackStatus != null and condition.feedbackStatus != ''">
+        AND main.feedback_status = #{condition.feedbackStatus, jdbcType=VARCHAR}
+      </if>
+      <if test = "condition.rejectedReason != null and condition.rejectedReason != ''">
+        AND main.rejected_reason like CONCAT('%',#{condition.rejectedReason, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.createBy != null and condition.createBy != ''">
+        AND main.create_by = #{condition.createBy}
+      </if>
+      <if test = "condition.createDateBegin != null">
+        AND main.create_date &gt;= #{condition.createDateBegin}
+      </if>
+      <if test = "condition.createDateEnd != null">
+        AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+      <if test = "condition.taskUserIdList != null and condition.taskUserIdList.size > 0">
+        AND main.task_user_id IN
+        <foreach collection="condition.taskUserIdList" item="taskUserId" open="(" close=")" separator=",">
+            #{taskUserId}
+        </foreach>
+      </if>
+      order by main.create_date desc
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from
+        t_task_user_feedback_log main
+      where
+        main.deleted = 0 and main.id = #{id}
+    </select>
+
+    <select id="selectMaxFeedbackTimeList" resultMap="BaseResultMap">
+      select
+        main.task_user_id as main__task_user_id, max(main.create_date) as main__create_date
+      from
+        t_task_user_feedback_log main
+      where
+        main.deleted = 0
+      <if test = "taskUserIdList != null">
+        AND main.task_user_id in
+        <foreach collection="taskUserIdList" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      GROUP BY task_user_id
+    </select>
+</mapper>

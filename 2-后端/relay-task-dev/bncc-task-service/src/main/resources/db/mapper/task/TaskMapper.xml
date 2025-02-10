@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.task.mapper.TaskMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.task.entity.Task">
+    <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+    <result column="main__out_id" jdbcType="VARCHAR" property="outId" />
+    <result column="main__plan_item_id" jdbcType="VARCHAR" property="planItemId" />
+    <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+    <result column="main__ass_task_code" jdbcType="VARCHAR" property="assTaskCode" />
+    <result column="main__unit_name" jdbcType="VARCHAR" property="unitName" />
+    <result column="main__type" jdbcType="BIT" property="type" />
+    <result column="main__reason" jdbcType="BIT" property="reason" />
+    <result column="main__start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="main__end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="main__station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="main__line_name" jdbcType="VARCHAR" property="lineName" />
+    <result column="main__device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="main__ranges" jdbcType="VARCHAR" property="ranges" />
+    <result column="main__location" jdbcType="VARCHAR" property="location" />
+    <result column="main__job_content" jdbcType="VARCHAR" property="jobContent" />
+    <result column="main__bool_notify_media" jdbcType="TINYINT" property="boolNotifyMedia" />
+    <result column="main__assigned_by" jdbcType="BIGINT" property="assignedBy" />
+    <result column="main__task_source" jdbcType="BIGINT" property="taskSource" />
+    <result column="main__cancel_reason" jdbcType="VARCHAR" property="cancelReason" />
+    <result column="main__cancel_time" jdbcType="TIMESTAMP" property="cancelTime" />
+    <result column="main__unassigned_qty" jdbcType="INTEGER" property="unassignedQty" />
+    <result column="main__assigned_qty" jdbcType="INTEGER" property="assignedQty" />
+    <result column="main__cancelled_qty" jdbcType="INTEGER" property="cancelledQty" />
+    <result column="main__rejected_qty" jdbcType="INTEGER" property="rejectedQty" />
+    <result column="main__agreed_qty" jdbcType="INTEGER" property="agreedQty" />
+    <result column="main__unsigned_qty" jdbcType="INTEGER" property="unsignedQty" />
+    <result column="main__cancel_unassigned_qty" jdbcType="INTEGER" property="cancelUnassignedQty" />
+    <result column="main__cancel_assigned_qty" jdbcType="INTEGER" property="cancelAssignedQty" />
+    <result column="main__cancel_unsigned_qty" jdbcType="INTEGER" property="cancelUnsignedQty" />
+    <result column="main__cancel_agreed_qty" jdbcType="INTEGER" property="cancelAgreedQty" />
+    <result column="main__execute_status_id" jdbcType="BIGINT" property="executeStatusId" />
+    <result column="main__advance_status" jdbcType="INTEGER" property="advanceStatus" />
+    <result column="main__version" jdbcType="BIGINT" property="version" />
+    <result column="main__attribute1" jdbcType="VARCHAR" property="attribute1" />
+    <result column="main__attribute2" jdbcType="VARCHAR" property="attribute2" />
+    <result column="main__attribute3" jdbcType="VARCHAR" property="attribute3" />
+    <result column="main__attribute4" jdbcType="VARCHAR" property="attribute4" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+    <result column="main__engineers_team_ids" jdbcType="VARCHAR" property="engineersTeamIds" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="main__is_repeat" jdbcType="INTEGER" property="isRepeat" />
+    <association property="taskExecuteStatus" javaType="com.tecpie.platform.task.entity.TaskExecuteStatus">
+      <id column="es__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+      <result column="es__task_id" jdbcType="BIGINT" property="taskId" />
+      <result column="es__execute_status" jdbcType="BIT" property="executeStatus" />
+      <result column="es__create_by" jdbcType="BIGINT" property="createBy" />
+      <result column="es__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    </association>
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.out_id as main__out_id, main.plan_item_id as main__plan_item_id, main.task_code as main__task_code,
+      main.ass_task_code as main__ass_task_code, main.unit_name as main__unit_name, main.type as main__type,
+      main.reason as main__reason, main.start_time as main__start_time, main.end_time as main__end_time, main.station_name as main__station_name,
+      main.line_name as main__line_name, main.device_name as main__device_name, main.ranges as main__ranges, main.location as main__location,
+      main.job_content as main__job_content, main.bool_notify_media as main__bool_notify_media, main.task_source as main__task_source, main.cancel_reason as main__cancel_reason,
+      main.cancel_time as main__cancel_time, main.assigned_by as main__assigned_by, main.unassigned_qty as main__unassigned_qty, main.assigned_qty as main__assigned_qty,
+      main.cancelled_qty as main__cancelled_qty, main.rejected_qty as main__rejected_qty, main.agreed_qty as main__agreed_qty, main.unsigned_qty as main__unsigned_qty,
+      main.cancel_unassigned_qty as main__cancel_unassigned_qty, main.cancel_assigned_qty as main__cancel_assigned_qty, main.cancel_unsigned_qty as main__cancel_unsigned_qty,
+      main.cancel_agreed_qty as main__cancel_agreed_qty, main.execute_status_id as main__execute_status_id, main.advance_status as main__advance_status, main.version as main__version,
+      main.attribute1 as main__attribute1, main.attribute2 as main__attribute2, main.attribute3 as main__attribute3, main.attribute4 as main__attribute4,
+      main.remark as main__remark, main.confirm_time as main__confirm_time,
+      main.engineers_team_ids as main__engineers_team_ids, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by,
+      main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date, main.is_repeat as main__is_repeat
+    </sql>
+
+    <sql id="Join_Table_List">
+      left join t_task_execute_status es on es.id = main.execute_status_id and es.deleted = 0
+    </sql>
+
+    <sql id="Join_Column_List">
+      es.id as es__id, es.task_id as es__task_id, es.execute_status as es__execute_status, es.create_by as es__create_by, es.create_date as es__create_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />,
+      <include refid="Join_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />,
+      <include refid="Join_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.task.api.command.query.TaskQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from
+        t_task main
+        <include refid="Join_Table_List" />
+      where
+        main.deleted = 0
+      <if test = "condition.startDateBegin != null">
+        AND main.start_time &gt;= #{condition.startDateBegin}
+      </if>
+      <if test = "condition.startDateEnd != null">
+        AND main.start_time &lt;= #{condition.startDateEnd}
+      </if>
+      <if test = "condition.endDateBegin != null">
+        AND main.end_time &gt;= #{condition.endDateBegin}
+      </if>
+      <if test = "condition.endDateEnd != null">
+        AND main.end_time &lt;= #{condition.endDateEnd}
+      </if>
+      <if test = "condition.taskCode != null and condition.taskCode != ''">
+        AND main.task_code like CONCAT('%',#{condition.taskCode, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.assTaskCode != null and condition.assTaskCode != ''">
+        AND main.ass_task_code like CONCAT('%',#{condition.assTaskCode, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.deviceName != null and condition.deviceName != ''">
+        AND main.device_name like CONCAT('%',#{condition.deviceName, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.ranges != null and condition.ranges != ''">
+        AND main.ranges like CONCAT('%',#{condition.ranges, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.jobContent != null and condition.jobContent != ''">
+        AND main.job_content like CONCAT('%',#{condition.jobContent, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.engineersTeamId != null and condition.engineersTeamId != ''">
+        AND FIND_IN_SET(#{condition.engineersTeamId}, main.engineers_team_ids)
+      </if>
+      <if test = "condition.taskIdList != null">
+        AND main.id in
+        <foreach collection="condition.taskIdList" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      <if test = "condition.executeStatusList != null">
+        AND es.execute_status in
+        <foreach collection="condition.executeStatusList" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      order by field(main.advance_status, 1, 2, 3, 4, 5, 0), main.start_time asc, es.execute_status asc
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from
+        t_task main
+        <include refid="Join_Table_List" />
+      where
+        main.deleted = 0 and main.id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectTaskTotal" parameterType="com.tecpie.platform.task.api.command.query.TaskTotalQueryCommand" resultType="java.lang.Integer">
+      select
+        count(1) as count
+      from
+        t_task main
+        <include refid="Join_Table_List" />
+      where
+         main.deleted = 0
+      <if test = "condition.executeStatusList != null">
+        AND es.execute_status in
+        <foreach collection="condition.executeStatusList" item="item" separator="," open="(" close=")">
+          ${item}
+        </foreach>
+      </if>
+        <if test="condition.createDateBegin != null">
+            AND main.create_date &gt;= #{condition.createDateBegin}
+      </if>
+        <if test="condition.createDateEnd != null">
+            AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+    </select>
+
+    <delete id="deleteTask" >
+      delete from t_task where id = #{id}
+    </delete>
+
+</mapper>

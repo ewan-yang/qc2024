@@ -1,0 +1,10 @@
+logs
+generated
+.idea
+.gradle
+*.iml
+*.log
+**/build
+**/target
+**/out
+.fastRequest

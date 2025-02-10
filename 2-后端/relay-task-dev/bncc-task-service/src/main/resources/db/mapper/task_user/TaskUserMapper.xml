@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.task_user.mapper.TaskUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.task_user.entity.TaskUser">
+        <id column="main__id" property="id"/>
+        <result column="main__task_id" jdbcType="BIGINT" property="taskId"/>
+        <result column="main__receipt_code" jdbcType="VARCHAR" property="receiptCode"/>
+        <result column="main__account_number" jdbcType="VARCHAR" property="accountNumber"/>
+        <result column="main__customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="main__customer_address" jdbcType="VARCHAR" property="customerAddress"/>
+        <result column="main__station_line_name" jdbcType="VARCHAR" property="stationLineName"/>
+        <result column="main__phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="main__post_code" jdbcType="VARCHAR" property="postCode"/>
+        <result column="main__user_type" jdbcType="BIT" property="userType"/>
+        <result column="main__user_priority" jdbcType="BIT" property="userPriority"/>
+        <result column="main__bool_short_time" jdbcType="BIT" property="boolShortTime"/>
+        <result column="main__region" jdbcType="VARCHAR" property="region"/>
+        <result column="main__electrical_number" jdbcType="VARCHAR" property="electricalNumber"/>
+        <result column="main__voltage_level" jdbcType="VARCHAR" property="voltageLevel"/>
+        <result column="main__address" jdbcType="VARCHAR" property="address"/>
+        <result column="main__access_point" jdbcType="VARCHAR" property="accessPoint"/>
+        <result column="main__access_point_name" jdbcType="VARCHAR" property="accessPointName"/>
+        <result column="main__capacity" jdbcType="VARCHAR" property="capacity"/>
+        <result column="main__bool_repeat_power_cut" jdbcType="BIT" property="boolRepeatPowerCut"/>
+        <result column="main__last_power_cut_time" jdbcType="TIMESTAMP" property="lastPowerCutTime"/>
+        <result column="main__assign_status" jdbcType="CHAR" property="assignStatus"/>
+        <result column="main__assign_method" jdbcType="BIT" property="assignMethod"/>
+        <result column="main__assign_time" jdbcType="TIMESTAMP" property="assignTime"/>
+        <result column="main__engineers_team_id" jdbcType="BIGINT" property="engineersTeamId"/>
+        <result column="main__engineers_team_name" jdbcType="VARCHAR" property="engineersTeamName"/>
+        <result column="main__feedback_status" jdbcType="CHAR" property="feedbackStatus"/>
+        <result column="main__feedback_time" jdbcType="TIMESTAMP" property="feedbackTime"/>
+        <result column="main__cancel_reason" jdbcType="VARCHAR" property="cancelReason"/>
+        <result column="main__cancel_assign_status" jdbcType="CHAR" property="cancelAssignStatus"/>
+        <result column="main__cancel_assign_method" jdbcType="BIT" property="cancelAssignMethod"/>
+        <result column="main__cancel_feedback_status" jdbcType="CHAR" property="cancelFeedbackStatus"/>
+        <result column="main__cancel_feedback_time" jdbcType="TIMESTAMP" property="cancelFeedbackTime"/>
+        <result column="main__backup_phone" jdbcType="VARCHAR" property="backupPhone"/>
+        <result column="main__rejected_reason" jdbcType="VARCHAR" property="rejectedReason"/>
+        <result column="main__attribute1" jdbcType="VARCHAR" property="attribute1"/>
+        <result column="main__attribute2" jdbcType="VARCHAR" property="attribute2"/>
+        <result column="main__attribute3" jdbcType="VARCHAR" property="attribute3"/>
+        <result column="main__remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="main__status" jdbcType="BIT" property="status"/>
+        <result column="main__deleted" jdbcType="BIT" property="deleted"/>
+        <result column="main__create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="main__update_by" jdbcType="BIGINT" property="updateBy"/>
+        <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <association property="task" javaType="com.tecpie.platform.task.entity.Task">
+            <id column="task__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long"/>
+            <result column="task__task_code" jdbcType="VARCHAR" property="taskCode"/>
+            <result column="task__type" jdbcType="BIT" property="type"/>
+            <result column="task__reason" jdbcType="BIT" property="reason"/>
+            <result column="task__start_time" jdbcType="TIMESTAMP" property="startTime"/>
+            <result column="task__end_time" jdbcType="TIMESTAMP" property="endTime"/>
+            <result column="task__station_name" jdbcType="VARCHAR" property="stationName"/>
+            <result column="task__line_name" jdbcType="VARCHAR" property="lineName"/>
+            <result column="task__device_name" jdbcType="VARCHAR" property="deviceName"/>
+            <association property="taskExecuteStatus" javaType="com.tecpie.platform.task.entity.TaskExecuteStatus">
+                <result column="es__execute_status" jdbcType="BIT" property="executeStatus"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.task_id as main__task_id, main.receipt_code as main__receipt_code, main.account_number as main__account_number, main.customer_name as main__customer_name,
+      main.customer_address as main__customer_address, main.station_line_name as main__station_line_name, main.phone as main__phone, main.post_code as main__post_code, main.user_type as main__user_type, main.user_priority as main__user_priority,
+      main.bool_short_time as main__bool_short_time, main.region as main__region, main.electrical_number as main__electrical_number, main.voltage_level as main__voltage_level,
+      main.address as main__address, main.access_point as main__access_point, main.access_point_name as main__access_point_name, main.capacity as main__capacity,
+      main.assign_status as main__assign_status, main.assign_method as main__assign_method, main.assign_time as main__assign_time, main.engineers_team_id as main__engineers_team_id,
+      main.bool_repeat_power_cut as main__bool_repeat_power_cut, main.last_power_cut_time as main__last_power_cut_time, main.feedback_status as main__feedback_status,
+      main.feedback_time as main__feedback_time, main.cancel_reason as main__cancel_reason, main.cancel_assign_status as main__cancel_assign_status,
+      main.cancel_assign_method as main__cancel_assign_method, main.cancel_feedback_status as main__cancel_feedback_status, main.cancel_feedback_time as main__cancel_feedback_time,
+      main.backup_phone as main__backup_phone, main.rejected_reason as main__rejected_reason, main.attribute1 as main__attribute1, main.attribute2 as main__attribute2,
+      main.attribute3 as main__attribute3, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by,
+      main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Join_Column_List">
+      task.id as task__id, task.task_code as task__task_code, task.type as task__type, task.reason as task__reason, task.start_time as task__start_time,
+      task.end_time as task__end_time, task.station_name as task__station_name, task.line_name as task__line_name, task.device_name as task__device_name,
+      es.execute_status as es__execute_status,
+      et.name as main__engineers_team_name
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+        <include refid="Base_Column_List"/>,
+        <include refid="Join_Column_List"/>
+    </sql>
+
+    <sql id="Column_List_Combine">
+        <include refid="Base_Column_List"/>,
+        <include refid="Join_Column_List"/>
+    </sql>
+
+    <sql id="Join_Table_List_Combine">
+        left join t_task task on task.id = main.task_id
+    left join t_task_execute_status es on es.id = task.execute_status_id
+    left join t_engineers_team et on et.id = main.engineers_team_id
+    </sql>
+
+    <select id="searchExtensionPageList"
+            parameterType="com.tecpie.platform.task_user.api.command.query.TaskUserQueryCommand"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Column_List_Page_Combine"/>
+        from
+        t_task_user main
+        <include refid="Join_Table_List_Combine"/>
+        where
+        main.deleted = 0
+        <!-- 在此处添加自定义筛选条件 -->
+        <if test="condition.userTypeList != null and condition.userTypeList.size > 0">
+            AND main.user_type IN
+            <foreach collection="condition.userTypeList" item="userType" open="(" close=")" separator=",">
+                #{userType,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="condition.userType != null">
+            AND main.user_type = #{condition.userType,jdbcType=INTEGER}
+        </if>
+        <if test="condition.engineersTeamId != null">
+            AND main.engineers_team_id = #{condition.engineersTeamId,jdbcType=BIGINT}
+        </if>
+        <if test="condition.receiptCode != null and condition.receiptCode != ''">
+            AND main.receipt_code like CONCAT('%',#{condition.receiptCode, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.taskId != null">
+            AND main.task_id = #{condition.taskId, jdbcType=BIGINT}
+        </if>
+        <if test="condition.accountNumber != null and condition.accountNumber != ''">
+            AND main.account_number like CONCAT('%',#{condition.accountNumber, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.accountNumberList != null and condition.accountNumberList.size() > 0">
+            AND main.account_number in
+            <foreach collection="condition.accountNumberList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.customerName != null and condition.customerName != ''">
+            AND main.customer_name like CONCAT('%',#{condition.customerName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.customerAddress != null and condition.customerAddress != ''">
+            AND main.customer_address like CONCAT('%',#{condition.customerAddress, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.phone != null and condition.phone != ''">
+            AND main.phone like CONCAT('%',#{condition.phone, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.region != null and condition.region != ''">
+            AND main.region like CONCAT('%',#{condition.region, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.electricalNumber != null and condition.electricalNumber != ''">
+            AND main.electrical_number like CONCAT('%',#{condition.electricalNumber, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.voltageLevel != null and condition.voltageLevel != ''">
+            AND main.voltage_level like CONCAT('%',#{condition.voltageLevel, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.cancelReason != null and condition.cancelReason != ''">
+            AND main.cancel_reason like CONCAT('%',#{condition.cancelReason, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.assignStatusList != null and condition.assignStatusList.size() > 0">
+            AND main.assign_status in
+            <foreach collection="condition.assignStatusList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.cancelAssignStatusList != null and condition.cancelAssignStatusList.size() > 0">
+            AND main.cancel_assign_status in
+            <foreach collection="condition.cancelAssignStatusList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.taskExecuteStatusList != null and condition.taskExecuteStatusList.size() > 0">
+            AND es.execute_status in
+            <foreach collection="condition.taskExecuteStatusList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.taskUserIdList != null and condition.taskUserIdList.size() > 0">
+            AND main.id in
+            <foreach collection="condition.taskUserIdList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.startDateBegin != null">
+            AND task.start_time &gt;= #{condition.startDateBegin}
+        </if>
+        <if test="condition.startDateEnd != null">
+            AND task.start_time &lt;= #{condition.startDateEnd}
+        </if>
+        <if test="condition.feedbackStatus != null and condition.feedbackStatus != ''">
+            AND main.feedback_status = #{condition.feedbackStatus}
+        </if>
+        order by main.task_id desc, main.receipt_code
+    </select>
+
+    <select id="searchTaskUserList" parameterType="java.util.ArrayList" resultMap="BaseResultMap">
+        select
+        main.account_number as main__account_number,
+        main.voltage_level as main__voltage_level,
+        main.user_type as main__user_type,
+        date_format(max(task.start_time), '%Y-%m-%d %H:%i') as main__attribute1
+        from
+        t_task_user main
+        left join t_task task on task.id = main.task_id
+        where
+        main.deleted = 0
+        and task.deleted = 0
+        and main.account_number in
+        <foreach collection="accountNumberList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and date_sub(task.start_time, interval 1 year) and now()
+        group by
+        main.account_number, main.voltage_level, main.user_type
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+        select
+        <include refid="Column_List_Combine"/>
+        from
+        t_task_user main
+        <include refid="Join_Table_List_Combine"/>
+        where
+        main.deleted = 0 and main.id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByTaskId">
+        delete
+        from t_task_user
+        where task_id = #{taskId}
+    </delete>
+
+    <sql id="Total_Where_Sql">
+        <if test="condition.executeStatusList != null">
+            AND es.execute_status in
+            <foreach collection="condition.executeStatusList" item="item" separator="," open="(" close=")">
+                ${item}
+            </foreach>
+        </if>
+        <if test="condition.assignStatus != null and condition.assignStatus != ''">
+            AND main.assign_status = #{condition.assignStatus, jdbcType=CHAR}
+        </if>
+        <if test="condition.feedbackStatus != null and condition.feedbackStatus != ''">
+            AND main.feedback_status = #{condition.feedbackStatus, jdbcType=CHAR}
+        </if>
+        <if test="condition.cancelAssignStatus != null and condition.cancelAssignStatus != ''">
+            AND main.cancel_assign_status = #{condition.cancelAssignStatus, jdbcType=CHAR}
+        </if>
+        <if test="condition.cancelFeedbackStatus != null and condition.cancelFeedbackStatus != ''">
+            AND main.cancel_feedback_status = #{condition.cancelFeedbackStatus, jdbcType=CHAR}
+        </if>
+        <if test="condition.engineersTeamId != null">
+            AND main.engineers_team_id = #{condition.engineersTeamId,jdbcType=BIGINT}
+        </if>
+        <if test="condition.boolRepeatPowerCut != null">
+            AND main.bool_repeat_power_cut = #{condition.boolRepeatPowerCut,jdbcType=BIT}
+        </if>
+        <if test="condition.sqlType != null and condition.sqlType != ''">
+            <!-- 超时条件 -->
+            <if test="condition.sqlType == 'timeOut'">
+                AND DATE(now()) &gt; DATE_SUB(task.start_time, INTERVAL (select days from t_task_advance_rule where
+                rule_code = 'GZ0000002') DAY)
+            </if>
+        </if>
+        <if test="condition.createDateBegin != null">
+            AND task.create_date &gt;= #{condition.createDateBegin}
+        </if>
+        <if test="condition.createDateEnd != null">
+            AND task.create_date &lt;= #{condition.createDateEnd}
+        </if>
+    </sql>
+
+    <select id="getTaskUserTotal"
+            parameterType="com.tecpie.platform.task_user.api.command.query.TaskUserTotalQueryCommand"
+            resultType="java.lang.Integer">
+        select
+        count(main.id) as count
+        from
+        t_task_user main
+        <include refid="Join_Table_List_Combine"/>
+        where
+        main.deleted = 0
+        <include refid="Total_Where_Sql"/>
+    </select>
+
+    <select id="getTaskUserAreaTotal"
+            parameterType="com.tecpie.platform.task_user.api.command.query.TaskUserTotalQueryCommand"
+            resultType="java.lang.Integer">
+        select
+        count(DISTINCT main.region) as count
+        from
+        t_task_user main
+        <include refid="Join_Table_List_Combine"/>
+        where
+        main.deleted = 0
+        <include refid="Total_Where_Sql"/>
+    </select>
+
+    <select id="listByExecuteStatusAndDate" parameterType="com.tecpie.platform.task_user.api.command.query.EngineerSummaryQueryCommand"
+            resultType="com.tecpie.platform.task_user.entity.TaskUser">
+        SELECT
+        main.id,main.task_id,main.receipt_code,main.account_number,main.customer_name,main.customer_address,main.phone,main.post_code,
+        main.user_type,main.user_priority,main.bool_short_time,main.region,main.electrical_number,main.voltage_level,main.address,
+        main.access_point,main.access_point_name,main.capacity,main.bool_repeat_power_cut,main.last_power_cut_time,main.assign_status,
+        main.assign_method,main.assign_time,main.engineers_team_id,main.feedback_status,main.feedback_time,main.cancel_reason,
+        main.cancel_assign_status,main.cancel_assign_method,main.cancel_feedback_status,main.cancel_feedback_time,
+        t3.execute_status AS task_execute_status,t2.start_time AS start_time
+        FROM t_task_user AS main
+        LEFT JOIN t_task AS t2 ON main.task_id = t2.id
+        left join t_task_execute_status AS t3 on t3.id = t2.execute_status_id
+        WHERE main.deleted = 0 AND t2.deleted = 0
+        <if test="condition.engineersTeamId != null and condition.engineersTeamId != ''">
+            AND main.engineers_team_id = #{condition.engineersTeamId}
+        </if>
+        <if test="condition.executeStatusList != null and condition.executeStatusList.size > 0">
+            AND t3.execute_status IN
+            <foreach collection="condition.executeStatusList" item="executeStatus" open="(" close=")" separator=",">
+                {executeStatus}
+            </foreach>
+        </if>
+        <if test="condition.startDateTime != null">
+            AND t2.start_time &gt;= #{condition.startDateTime}
+        </if>
+        <if test="condition.endDateTime != null">
+            AND t2.start_time &lt;= #{condition.endDateTime}
+        </if>
+    </select>
+
+</mapper>

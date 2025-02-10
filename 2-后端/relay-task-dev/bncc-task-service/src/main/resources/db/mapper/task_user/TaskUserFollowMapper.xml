@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.task_user.mapper.TaskUserFollowMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.task_user.entity.TaskUserFollow">
+    <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+    <result column="main__task_user_id" jdbcType="BIGINT" property="taskUserId" />
+    <result column="main__follow_method" jdbcType="BIT" property="followMethod" />
+    <result column="main__dock_user" jdbcType="VARCHAR" property="dockUser" />
+    <result column="main__tel_phone" jdbcType="VARCHAR" property="telPhone" />
+    <result column="main__feedback_status" jdbcType="CHAR" property="feedbackStatus" />
+    <result column="main__follow_desc" jdbcType="VARCHAR" property="followDesc" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.task_user_id as main__task_user_id, main.follow_method as main__follow_method, main.dock_user as main__dock_user, main.tel_phone as main__tel_phone,
+      main.feedback_status as main__feedback_status, main.follow_desc as main__follow_desc, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted,
+      main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.task_user.api.command.query.TaskUserFollowQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from
+        t_task_user_follow main
+      where
+        main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.taskUserId != null">
+        AND main.task_user_id = #{condition.taskUserId,jdbcType=BIGINT}
+      </if>
+      <if test = "condition.followMethod != null">
+        AND main.follow_method = #{condition.followMethod,jdbcType=INTEGER}
+      </if>
+      <if test = "condition.telPhone != null and condition.telPhone != ''">
+        AND main.tel_phone like CONCAT('%',#{condition.telPhone, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.feedbackStatus != null and condition.feedbackStatus != ''">
+        AND main.feedback_status = #{condition.feedbackStatus, jdbcType=VARCHAR}
+      </if>
+      <if test = "condition.createBy != null and condition.createBy != ''">
+        AND main.create_by = #{condition.createBy}
+      </if>
+      <if test = "condition.createDateBegin != null">
+        AND main.create_date &gt;= #{condition.createDateBegin}
+      </if>
+      <if test = "condition.createDateEnd != null">
+        AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+      order by main.create_date desc
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from
+        t_task_user_follow main
+      where
+        main.deleted = 0 and main.id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.function.mapper.SysPermissionMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.function.entity.SysPermission">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__resource_id" jdbcType="BIGINT" property="resourceId" />
+    <result column="main__operation_id" jdbcType="BIGINT" property="operationId" />
+    <result column="main__permission_code" jdbcType="VARCHAR" property="permissionCode" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="INTEGER" property="status" />
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+
+    <association property="sysOperation" column="main__operation_id" javaType="com.tecpie.platform.user.business.system.function.entity.SysOperation">
+      <id column="operation_id" jdbcType="BIGINT" property="id" />
+      <result column="operation_code" jdbcType="VARCHAR" property="code" />
+      <result column="operation_name" jdbcType="VARCHAR" property="name" />
+      <result column="operation_remark" jdbcType="VARCHAR" property="remark" />
+      <result column="operation_status" jdbcType="INTEGER" property="status" />
+    </association>
+    <association property="sysResource" column="main__resource_id"
+      javaType="com.tecpie.platform.user.business.system.function.entity.SysResource">
+      <id column="resource_id" jdbcType="BIGINT" property="id" />
+      <result column="resource_code" jdbcType="VARCHAR" property="code"/>
+      <result column="resource_name" jdbcType="VARCHAR" property="name"/>
+      <result column="resource_remark" jdbcType="VARCHAR" property="remark"/>
+      <result column="resource_status" jdbcType="INTEGER" property="status"/>
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    main.id as main__id, main.resource_id as main__resource_id, main.operation_id as
+    main__operation_id, main.permission_code as main__permission_code, main.remark as main__remark,
+    main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by,
+    main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as
+    main__update_date
+  </sql>
+
+  <sql id="Resource_Operation_Column_list">
+    resource.id as resource_id, resource.code as resource_code, resource.name as resource_name,
+    resource.remark as resource_mark, resource.status as resource_status,
+    operation.id as operation_id, operation.code as operation_code, operation.name as
+    operation_name, operation.remark as operation_mark, operation.status as operation_status
+  </sql>
+
+  <sql id="Column_List_Page_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+  <sql id="Column_List_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+
+  <select id="searchExtensionPageList"
+    parameterType="com.tecpie.platform.user.business.function.api.command.query.SysPermissionQueryCommand"
+    resultMap="BaseResultMap">
+    select
+    <include refid="Column_List_Page_Combine"/>,
+    <include refid="Resource_Operation_Column_list"/>
+    from sys_permission main
+    left join sys_resource resource on resource.id = main.resource_id and resource.deleted = 0
+    left join sys_operation operation on operation.id = main.operation_id and operation.deleted =
+    0
+    where main.deleted = 0
+    <!-- 在此处添加自定义筛选条件 -->
+
+    <if test="condition.resourceName != null">
+      AND resource.name LIKE CONCAT('%',#{condition.resourceName},'%')
+    </if>
+    <if test="condition.operationName != null">
+      AND operation.name LIKE CONCAT('%',#{condition.operationName},'%')
+    </if>
+    <if test="condition.status != null">
+      AND main.status = #{condition.status, jdbcType=BIGINT}
+    </if>
+    <if test="condition.createBy != null and condition.createBy != ''">
+      AND main.create_by = #{condition.createBy}
+    </if>
+    <if test="condition.createDateBegin != null">
+      AND main.create_date &gt;= #{condition.createDateBegin}
+    </if>
+    <if test="condition.createDateEnd != null">
+      AND main.create_date &lt;= #{condition.createDateEnd}
+    </if>
+    <if test="condition.updateBy != null and condition.updateBy != ''">
+      AND main.update_by = #{condition.updateBy}
+    </if>
+    <if test="condition.updateDateBegin != null">
+      AND main.update_date &gt;= #{condition.updateDateBegin}
+    </if>
+    <if test="condition.updateDateEnd != null">
+      AND main.update_date &lt;= #{condition.updateDateEnd}
+    </if>
+  </select>
+
+  <select id="selectExtensionById" resultMap="BaseResultMap">
+    select
+    <include refid="Column_List_Combine"/>,
+    <include refid="Resource_Operation_Column_list"/>
+    from sys_permission main
+    left join sys_resource resource on resource.id = main.resource_id and resource.deleted = 0
+    left join sys_operation operation on operation.id = main.operation_id and operation.deleted = 0
+    where main.deleted = 0 and main.id = #{id}
+  </select>
+
+</mapper>

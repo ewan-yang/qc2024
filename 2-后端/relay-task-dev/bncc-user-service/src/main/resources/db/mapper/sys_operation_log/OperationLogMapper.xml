@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.sys_operation_log.mapper.OperationLogMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.sys_operation_log.entity.OperationLog">
+    <id column="main__id" property="id" />
+    <result column="main__trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="main__span_id" jdbcType="VARCHAR" property="spanId" />
+    <result column="main__remote_ip" jdbcType="VARCHAR" property="remoteIp" />
+    <result column="main__request_uri" jdbcType="VARCHAR" property="requestUri" />
+    <result column="main__requestMethod" jdbcType="VARCHAR" property="requestMethod" />
+    <result column="main__contentType" jdbcType="VARCHAR" property="contentType" />
+    <result column="main__requestHeaders" jdbcType="VARCHAR" property="requestHeaders" />
+    <result column="main__requestParams" jdbcType="VARCHAR" property="requestParams" />
+    <result column="main__requestBody" jdbcType="LONGVARCHAR" property="requestBody" />
+    <result column="main__operation" jdbcType="VARCHAR" property="operation" />
+    <result column="main__httpStatus" jdbcType="VARCHAR" property="httpStatus" />
+    <result column="main__responseBody" jdbcType="LONGVARCHAR" property="responseBody" />
+    <result column="main__duration" jdbcType="BIGINT" property="duration" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="INTEGER" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.trace_id as main__trace_id, main.span_id as main__span_id, main.remote_ip as main__remote_ip, main.request_uri as main__request_uri, main.requestMethod as main__requestMethod, main.contentType as main__contentType, main.requestHeaders as main__requestHeaders, main.requestParams as main__requestParams, main.requestBody as main__requestBody, main.operation as main__operation, main.httpStatus as main__httpStatus, main.responseBody as main__responseBody, main.duration as main__duration, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.user.business.system.sys_operation_log.api.command.query.OperationLogQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from sys_operation_log main
+      where main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+
+      <if test = "condition.status != null">
+        AND main.status = #{condition.status, jdbcType=BIGINT}
+      </if>
+      <if test = "condition.createBy != null and condition.createBy != ''">
+        AND main.create_by = #{condition.createBy}
+      </if>
+      <if test = "condition.createDateBegin != null">
+        AND main.create_date &gt;= #{condition.createDateBegin}
+      </if>
+      <if test = "condition.createDateEnd != null">
+        AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+      <if test = "condition.updateBy != null and condition.updateBy != ''">
+        AND main.update_by = #{condition.updateBy}
+      </if>
+      <if test = "condition.updateDateBegin != null">
+        AND main.update_date &gt;= #{condition.updateDateBegin}
+      </if>
+      <if test = "condition.updateDateEnd != null">
+        AND main.update_date &lt;= #{condition.updateDateEnd}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from sys_operation_log main
+      where main.deleted = 0 and main.id = #{id}
+    </select>
+</mapper>

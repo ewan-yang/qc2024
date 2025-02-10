@@ -1,0 +1,38 @@
+plugins {
+    id "jacoco"
+    id "org.springframework.boot" version "2.3.12.RELEASE"
+}
+
+dependencies {
+    implementation "com.tecpie.base:tecpie-webmvc-starter"
+    implementation "com.tecpie.base:tecpie-security-starter"
+    // 如果是微服务架构，需要使用Redis，则引入 com.tecpie.base:tecpie-data-redis-starter 依赖
+//    implementation "com.tecpie.base:tecpie-data-redis-starter"
+    implementation "com.tecpie.base:tecpie-data-jdbc-starter"
+    // 如果项目中不需要引入框架的代码自动生成，则不需要引入 com.tecpie.base:tecpie-code-generator 依赖
+    implementation "com.tecpie.base:tecpie-code-generator"
+
+    // 如果是微服务，则需要引入 com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery、com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config 依赖
+    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery"
+    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config"
+//    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+//    implementation "com.gw.eureka:eureka:2.0.0"
+
+    implementation 'org.flywaydb:flyway-core:7.15.0'
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+    // easy-excel
+    implementation 'com.alibaba:easyexcel:3.1.1'
+
+    // knife4j
+    implementation 'com.github.xiaoymin:knife4j-openapi3-spring-boot-starter:4.3.0'
+
+    implementation project(path: ':bncc-analysis-alarm-api')
+    implementation "com.tecpie.bncc:bncc-user-api:1.0.0-SNAPSHOT"
+    implementation "com.tecpie.bncc:bncc-task-api:1.0.0-SNAPSHOT"
+
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}

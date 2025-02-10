@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.PlanStatisticsMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.PlanStatistics">
+        <id column="main__id" property="id" />
+        <result column="main__project_code" jdbcType="VARCHAR" property="projectCode" />
+        <result column="main__project_name" jdbcType="VARCHAR" property="projectName" />
+        <result column="main__project_type" jdbcType="VARCHAR" property="projectType" />
+        <result column="main__start_time" jdbcType="DATE" property="startTime" />
+        <result column="main__end_time" jdbcType="DATE" property="endTime" />
+        <result column="main__station_line_name" jdbcType="LONGVARCHAR" property="stationLineName" />
+        <result column="main__construction_team" jdbcType="VARCHAR" property="constructionTeam" />
+        <result column="main__execute_status" jdbcType="CHAR" property="executeStatus" />
+        <result column="main__version" jdbcType="BIGINT" property="version" />
+        <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+    </resultMap>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.PlanQueryCommand" resultMap="BaseResultMap">
+        select
+            main.id as main__id, main.project_code as main__project_code, main.project_name as main__project_name,
+            main.project_type as main__project_type, main.start_time as main__start_time, main.end_time as main__end_time,
+            main.station_line_name as main__station_line_name,main.construction_team as main__construction_team,
+            main.execute_status as main__execute_status, main.version as main__version, task.task_code as main__task_code
+        from
+            t_plan_item main
+        LEFT JOIN t_task AS task ON task.plan_item_id = main.id AND task.deleted = 0
+        where
+            main.status = 1
+            AND main.deleted = 0
+        <if test = "condition.projectType != null and condition.projectType != ''">
+            AND main.project_type like CONCAT('%',#{condition.projectType, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.stationLineName != null and condition.stationLineName != ''">
+            AND main.station_line_name like CONCAT('%',#{condition.stationLineName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.constructionTeam != null and condition.constructionTeam != ''">
+            AND main.construction_team like CONCAT('%',#{condition.constructionTeam, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.startDateBegin != null">
+            AND main.start_time &gt;= #{condition.startDateBegin}
+        </if>
+        <if test = "condition.startDateEnd != null">
+            AND main.start_time &lt;= #{condition.startDateEnd}
+        </if>
+        order by main.start_time,main.create_date
+    </select>
+
+</mapper>

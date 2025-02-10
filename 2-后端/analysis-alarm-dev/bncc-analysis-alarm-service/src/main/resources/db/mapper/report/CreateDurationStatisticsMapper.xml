@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.CreateDurationStatisticsMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.CreateDurationStatistics">
+    <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+    <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+    <result column="main__reason" jdbcType="BIT" property="reason" />
+    <result column="main__start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="main__end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="main__confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+    <result column="main__ranges" jdbcType="VARCHAR" property="ranges" />
+    <result column="main__task_source" jdbcType="BIGINT" property="taskSource" />
+    <result column="main__task_source_name" jdbcType="VARCHAR" property="taskSourceName" />
+    <result column="main__task_user_count" property="taskUserCount" />
+    <result column="main__days" property="days" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.task_code as main__task_code, main.reason as main__reason, main.start_time as main__start_time,
+      main.end_time as main__end_time, main.ranges as main__ranges, main.task_source as main__task_source, main.confirm_time as main__confirm_time
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.CreateDurationQueryCommand"
+            resultMap="BaseResultMap">
+      SELECT
+      main__id,
+      main__task_code,
+      main__reason,
+      main__start_time,
+      main__end_time,
+      main__ranges,
+      main__task_source,
+      main__confirm_time,
+      main__task_source_name,
+      main__task_user_count,
+      main__days
+      FROM (
+        select DISTINCT
+          <include refid="Base_Column_List" />,
+          CONCAT(`user`.name,'(',IFNULL(NULLIF(`user`.telephone, ''), '-'),')') AS main__task_source_name,
+          (select count(tu.id) from t_task_user tu where tu.deleted = 0 and tu.task_id = main.id) as main__task_user_count,
+          datediff(main.start_time, main.confirm_time) as main__days,main.create_date
+        from
+          t_task main
+        LEFT JOIN sys_user AS `user` ON `user`.id = main.task_source
+        LEFT JOIN t_task_execute_status AS t1 ON t1.id = main.execute_status_id
+        where
+          main.deleted = 0
+        <if test = "condition.confirmTimeBegin != null">
+          AND main.confirm_time &gt;= #{condition.confirmTimeBegin}
+        </if>
+        <if test = "condition.confirmTimeEnd != null">
+          AND main.confirm_time &lt;= #{condition.confirmTimeEnd}
+        </if>
+        <if test = "condition.reason != null and condition.reason != ''">
+          AND main.reason like CONCAT('%',#{condition.reason, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.ranges != null and condition.ranges != ''">
+          AND main.ranges like CONCAT('%',#{condition.ranges, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.executeStatusList != null and condition.executeStatusList.size() > 0">
+          AND t1.execute_status in
+          <foreach collection="condition.executeStatusList" item="item" open="(" close=")" separator=",">
+            #{item}
+          </foreach>
+        </if>
+      ) AS T
+      ORDER BY
+      main__days DESC,
+      main__start_time,
+      create_date
+    </select>
+
+</mapper>

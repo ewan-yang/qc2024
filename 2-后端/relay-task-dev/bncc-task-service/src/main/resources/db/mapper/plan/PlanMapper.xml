@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.plan.mapper.PlanMapper">
+
+    <resultMap id="PlanResultMap" type="com.tecpie.platform.plan.entity.Plan">
+      <id column="main__plan_id" property="id" />
+      <result column="main__code" jdbcType="VARCHAR" property="code" />
+      <result column="main__plan_month" jdbcType="DATE" property="planMonth" />
+      <result column="main__title" jdbcType="VARCHAR" property="title" />
+    </resultMap>
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.plan.entity.Plan" extends="PlanResultMap">
+      <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+      <result column="main__status" jdbcType="BIT" property="status" />
+      <result column="main__deleted" jdbcType="BIT" property="deleted" />
+      <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+      <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+      <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+      <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    </resultMap>
+
+    <sql id="Plan_Column_List">
+      p.id as main__plan_id, p.code as main__code, p.plan_month as main__plan_month, p.title as main__title
+    </sql>
+
+    <sql id="Base_Column_List">
+      <include refid="Plan_Column_List" />,
+      p.remark as main__remark, p.status as main__status, p.deleted as main__deleted, p.create_by as main__create_by, p.create_date as main__create_date,
+      p.update_by as main__update_by, p.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.plan.api.command.query.PlanQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from
+        t_plan p
+      where
+        p.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.code != null and condition.code != ''">
+        AND p.code like CONCAT('%',#{condition.code, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.title != null and condition.title != ''">
+        AND p.title like CONCAT('%',#{condition.title, jdbcType=VARCHAR},'%')
+      </if>
+        <if test = "condition.planMonth != null and condition.planMonth != ''">
+            AND DATE_FORMAT(p.plan_month, '%Y-%m') = #{condition.planMonth}
+        </if>
+      <if test = "condition.createDateBegin != null">
+        AND p.create_date &gt;= #{condition.createDateBegin}
+      </if>
+      <if test = "condition.createDateEnd != null">
+        AND p.create_date &lt;= #{condition.createDateEnd}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from
+        t_plan p
+      where
+        p.deleted = 0 and p.id = #{id}
+    </select>
+</mapper>

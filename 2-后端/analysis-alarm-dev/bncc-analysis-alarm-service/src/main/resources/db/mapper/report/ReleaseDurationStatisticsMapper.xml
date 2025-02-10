@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.ReleaseDurationStatisticsMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.ReleaseDurationStatistics">
+      <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+      <result column="main__task_id" jdbcType="BIGINT" property="taskId" />
+      <result column="main__receipt_code" jdbcType="VARCHAR" property="receiptCode" />
+      <result column="main__engineers_team_name" jdbcType="VARCHAR" property="engineersTeamName" />
+      <result column="main__start_time" jdbcType="TIMESTAMP" property="startTime" />
+      <result column="main__account_number" jdbcType="VARCHAR" property="accountNumber" />
+      <result column="main__customer_name" jdbcType="VARCHAR" property="customerName" />
+      <result column="main__user_type" jdbcType="BIT" property="userType" />
+      <result column="main__region" jdbcType="VARCHAR" property="region" />
+      <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+      <result column="main__assign_time" jdbcType="TIMESTAMP" property="assignTime" />
+      <result column="main__feedback_time" jdbcType="TIMESTAMP" property="feedbackTime" />
+      <result column="main__hour_days" property="hourDays" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.receipt_code as main__receipt_code, main.account_number as main__account_number, main.customer_name as main__customer_name,
+      main.user_type as main__user_type, main.region as main__region, main.assign_time as main__assign_time, main.feedback_time as main__feedback_time,
+      et.name as main__engineers_team_name,
+      task.id as main__task_id, task.task_code as main__task_code, task.start_time as main__start_time
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.ReleaseDurationQueryCommand"
+            resultMap="BaseResultMap">
+        SELECT
+        main__id,
+        main__task_id,
+        main__receipt_code,
+        main__engineers_team_name,
+        main__start_time,
+        main__account_number,
+        main__customer_name,
+        main__user_type,
+        main__region,
+        main__task_code,
+        main__assign_time,
+        main__feedback_time,
+        main__hour_days
+        FROM (
+            select
+            <include refid="Base_Column_List"/>,task.create_date,
+            datediff(main.feedback_time, main.assign_time) as main__hour_days
+            from
+            t_task_user main
+            left join t_task task on task.id = main.task_id
+            left join t_task_execute_status es on es.id = task.execute_status_id
+            left join t_engineers_team et on et.id = main.engineers_team_id
+            where
+            main.deleted = 0
+            AND main.assign_status = '230'
+            AND main.feedback_status in ('320', '330')
+            AND es.execute_status in ('130', '140', '161')
+            <if test="condition.assignTimeBegin != null">
+                AND main.assign_time &gt;= #{condition.assignTimeBegin}
+              </if>
+              <if test="condition.assignTimeEnd != null">
+                AND main.assign_time &lt;= #{condition.assignTimeEnd}
+              </if>
+              <if test="condition.feedbackTimeBegin != null">
+                AND main.feedback_time &gt;= #{condition.feedbackTimeBegin}
+              </if>
+              <if test="condition.feedbackTimeEnd != null">
+                AND main.feedback_time &lt;= #{condition.feedbackTimeEnd}
+              </if>
+              <if test="condition.taskCode != null and condition.taskCode != ''">
+                AND task.task_code like CONCAT('%',#{condition.taskCode, jdbcType=VARCHAR},'%')
+              </if>
+              <if test="condition.region != null and condition.region != ''">
+                AND main.region like CONCAT('%',#{condition.region, jdbcType=VARCHAR},'%')
+              </if>
+              <if test="condition.userType != null">
+                AND main.user_type = #{condition.userType}
+              </if>
+              <if test="condition.engineersTeamId != null">
+                  AND main.engineers_team_id = #{condition.engineersTeamId,jdbcType=BIGINT}
+              </if>
+        ) AS T
+        order by main__hour_days desc,create_date
+    </select>
+
+</mapper>

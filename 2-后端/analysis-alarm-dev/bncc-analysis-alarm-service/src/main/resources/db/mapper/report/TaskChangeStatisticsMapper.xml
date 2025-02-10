@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.TaskChangeStatisticsMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.TaskChangeStatistics">
+    <id column="main__id" jdbcType="BIGINT" property="id" javaType="java.lang.Long" />
+    <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+    <result column="main__task_source" jdbcType="BIGINT" property="taskSource" />
+    <result column="main__task_source_name" jdbcType="VARCHAR" property="taskSourceName" />
+    <result column="main__start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="main__end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="main__device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="main__reason" jdbcType="BIT" property="reason" />
+    <result column="main__ranges" jdbcType="VARCHAR" property="ranges" />
+    <result column="main__task_user_count" property="taskUserCount" />
+    <result column="main__confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+    <result column="main__execute_status" jdbcType="VARCHAR" property="executeStatus" />
+    <result column="main__version" jdbcType="BIGINT" property="version" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.task_code as main__task_code, main.reason as main__reason, main.start_time as main__start_time, main.end_time as main__end_time,
+      main.device_name as main__device_name, main.ranges as main__ranges, main.task_source as main__task_source, main.confirm_time as main__confirm_time,
+      main.status as main__status, main.version as main__version,
+      es.execute_status as main__execute_status
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.TaskChangeQueryCommand" resultMap="BaseResultMap">
+      select
+          <include refid="Base_Column_List" />,
+          CONCAT(`user`.name,'(',IFNULL(NULLIF(`user`.telephone, ''), '-'),')') AS main__task_source_name,
+          (select count(tu.id) from t_task_user tu where tu.deleted = 0 and tu.task_id = main.id) as main__task_user_count
+      from
+          t_task main
+          left join t_task_execute_status es on es.id = main.execute_status_id
+          LEFT JOIN sys_user AS `user` ON `user`.id = main.task_source
+      where
+          main.deleted = 0
+      <if test = "condition.versionGtn != null">
+        AND main.version &gt; #{condition.versionGtn}
+      </if>
+      <if test = "condition.confirmTimeBegin != null">
+        AND main.confirm_time &gt;= #{condition.confirmTimeBegin}
+      </if>
+      <if test = "condition.confirmTimeEnd != null">
+        AND main.confirm_time &lt;= #{condition.confirmTimeEnd}
+      </if>
+      <if test = "condition.startDateBegin != null">
+        AND main.start_time &gt;= #{condition.startDateBegin}
+      </if>
+      <if test = "condition.startDateEnd != null">
+        AND main.start_time &lt;= #{condition.startDateEnd}
+      </if>
+      <if test = "condition.reason != null and condition.reason != ''">
+        AND main.reason like CONCAT('%',#{condition.reason, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.ranges != null and condition.ranges != ''">
+        AND main.ranges like CONCAT('%',#{condition.ranges, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.executeStatusList != null and condition.executeStatusList.size() > 0">
+        AND es.execute_status in
+        <foreach collection="condition.executeStatusList" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      order by main.start_time desc,main.create_date
+    </select>
+
+</mapper>

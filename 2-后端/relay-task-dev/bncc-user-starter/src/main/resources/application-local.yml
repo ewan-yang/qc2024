@@ -1,0 +1,94 @@
+spring:
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://172.16.0.20:3306/bncc?useSSL=false&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+    username: bncc_dev
+    password: Bncc!@#0627
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+    locations: classpath:db/migration/mysql
+
+igw:
+  appId: 1e0bbb45615144b6b7476229c1e3deda
+  secret: 2fec7bffef06486989e52fed4926ed98
+  signKey: 3D9F066C1E08C6DCA15BC7CCD7AC02F8F6F65F51F44D0F7763B6090F93D22914
+  service: zipapp://appid.1007269/index.html
+  baseUrl: https://igw.isgcc.net:18443
+  accessTokenPath: /zuul/sgid-provider-console/res/iscMincroService/getAccessToken
+  ticketPath: /zuul/sgid-frontmv/identity/getUserInfoByTicket
+  producerId: a8a459c3b94c4b499d5d9166f42c02ef
+  sm4Key: 17929188584169533161949613585861
+  sm2PubKey: 044AD150F479922BCB326DEC9A0092081C4E9D767E50C5E7715E76BEAC7B6E6E241C064E90ECA6EADA8887BF5C44CA0DB981CB4C27488733A5829DB3B91C7A37CC
+  msgBaseUrl: https://igw.isgcc.net:18443/isgcc_message/server
+  messageAppId: 65111133d9c6464eac085c94e8729d40
+  applicationAppId: 1007269
+isc:
+  profileUrl: http://10.131.59.143:17002/isc_sso/oauth2.0/profile
+
+tecpie:
+  # 是否开启未知参数校验
+  failOnUnknownProperties: true
+  # 系统容器：1-外网，2-内网
+  systemContainer: 2
+  security:
+    # 是否单机服务
+    single: false
+    # 是否使用当前服务鉴权
+    selfAuth: true
+    # JWT签名Key
+    jwtSignKey: TecpieBaseSecurity2021!@#
+    # 登录请求地址
+    loginUrl: /api/v1/access/login
+    #是否允许同一账户重复登录
+    duplicateLogin: false
+    # token过期时间(min)
+    tokenExpireTime: 600
+    # 是否合并验证用户名密码
+    allCheck: true
+    # 密码有效期(天) 为0代表不启用
+    passwordTerm: 60
+    kaptcha:
+      # kaptcha在缓存中的过期时间为60秒，单位为秒
+      expireTime: 60
+      # 验证码长度 0代表不启用验证码
+      length: 0
+    msgVerify:
+      # 短信验证码在缓存中的过期时间为60秒，单位为秒
+      expireTime: 300
+      # 验证码长度 0代表不启用验证码
+      length: 1
+      # 长时间未登录需要进行手机号验证码校验，单位为天，0代表不进行校验
+      mustCheckTime: 0
+    # 最大登录失败次数
+    maxFailCount: 5
+    # 短期锁定时间（单位分钟）
+    shortLockTime: 10
+    allow:
+      # 白名单设置，多个白名单使用,分隔，如不需要进行 tokeswagger-uin 校验，则可将 uri 修改为 /**
+      uri: /*/actuator/health,/api/v1/access/**,/swagger-ui.html,/v3/api-docs/**,/relay-task/api/v1/is_health,/doc.html,/**/*.css,/**/*.js,/favicon.ico,/api/v1/user/updatePassword,/api/v1/task/out/add/batch
+  logging:
+    http:
+      enabled: false
+      method: POST,PUT,DELETE
+      notRecordUri: /cache/v1/**,/*/actuator/health,/api/v1/access/**,/swagger-ui.html,/v3/api-docs/**,/doc.html
+      respBody: false
+
+aws:
+  s3:
+    accessKey: AKIAZLL63WAX6C24JVXY
+    secretKey: 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
+    endpoint: ap-northeast-1
+    mode: true
+    signingRegion: ""
+    bucketName: bncc-sn
+    protocol: HTTP
+    preUrl: http://172.16.0.90:19000
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: assign_id
+
+pagehelper:
+  helper-dialect: mysql

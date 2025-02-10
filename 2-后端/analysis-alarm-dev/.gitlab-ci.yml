@@ -1,0 +1,94 @@
+stages:
+  - sonarqube
+  - deploy
+  - createRelease
+
+sonarqube:
+  stage: sonarqube
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+  script:
+    - /opt/sonar-scanner/bin/sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN} -Dsonar.sources=. -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.java.binaries=. -Dsonar.qualitygate.wait=true
+  allow_failure: false
+
+deploy:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^(dev|release.*|hotfix.*)$/'
+  script:
+    - |
+      # 触发 Jenkins 构建
+      BRANCH_NAME="${CI_COMMIT_BRANCH%%/*}"
+      if [[ "$CI_COMMIT_BRANCH" =~ ^hotfix/ ]]; then
+        # 提取 hotfix 分支的版本号
+        HOTFIX_VERSION=$(echo "$CI_COMMIT_BRANCH" | sed 's#^hotfix/\(.*\)$#\1#')
+        # 找到对应的 release 分支
+        RELEASE_BRANCH="release/$HOTFIX_VERSION"
+        BRANCH_NAME="${RELEASE_BRANCH%%/*}"
+      fi
+      JOB_NAME="$CI_PROJECT_NAME-$BRANCH_NAME"
+      RESPONSE=$(curl --write-out %{http_code} --silent --output /dev/null --request POST \
+        --url "http://jenkins:11701ec2d04ab3109277099e44e56d45a4@172.16.0.29:8099/job/$JOB_NAME/buildWithParameters?token=tecpie@1357&T_GIT_BRANCH=$CI_COMMIT_BRANCH")
+      
+      if [[ "$RESPONSE" == "200" || "$RESPONSE" == "201" ]]; then
+        echo "Jenkins 构建触发成功"
+      else
+        echo "Jenkins 构建触发失败"
+        exit 1
+      fi
+      
+      # 监控 Jenkins 构建状态
+      BUILD_STATUS="UNKNOWN"
+      while [[ "$BUILD_STATUS" != "SUCCESS" && "$BUILD_STATUS" != "FAILURE" ]]; do
+        sleep 10
+        BUILD_STATUS=$(curl --silent "http://jenkins:11701ec2d04ab3109277099e44e56d45a4@172.16.0.29:8099/job/$JOB_NAME/lastBuild/api/json" | jq -r '.result')
+      done
+      
+      # 检查 Jenkins 构建结果
+      if [[ "$BUILD_STATUS" == "SUCCESS" ]]; then
+        echo "Jenkins 构建成功"
+      else
+        echo "Jenkins 构建失败"
+        exit 1
+      fi
+
+createRelease:
+  stage: createRelease
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^(master|release.*|hotfix.*)$/'
+  script:
+    - |      # 提取版本号
+      if [ "$CI_COMMIT_BRANCH" = "master" ]; then
+        # 获取最近一次合并到 master 的 release 分支的版本号
+        VERSION=$(git log --merges --grep="Merge branch 'release/" --pretty=format:"%s" | grep -oP "release/\K[^,' ]+" | head -n 1)
+      else
+        # 对于 release 和 hotfix 分支，提取第一个 / 后面的内容作为版本号
+        VERSION=$(echo "$CI_COMMIT_BRANCH" | sed 's#^[^/]\+/\(.*\)$#\1#')-SNAPSHOT
+      fi
+      # 触发 GitLab 创建 Release
+      RELEASE_VERSION=V$VERSION
+      RELEASE_DESCRIPTION="构建后自动创建Release."
+       # 检查并删除已存在的 tag
+      EXISTING_TAGS=$(git tag -l "$RELEASE_VERSION")
+      if  [ -n "$EXISTING_TAGS" ]; then
+        git tag -d "$RELEASE_VERSION"
+        git push http://oauth2:FM4JxCg6LeAqQtsp1J3g@172.16.0.52/$CI_PROJECT_PATH.git :refs/tags/"$RELEASE_VERSION"
+      fi
+
+      # 创建新的 tag
+      git tag "$RELEASE_VERSION"
+      git push http://oauth2:FM4JxCg6LeAqQtsp1J3g@172.16.0.52/$CI_PROJECT_PATH.git "$RELEASE_VERSION"
+
+      EXISTING_RELEASE=$(curl --silent --header "PRIVATE-TOKEN: FM4JxCg6LeAqQtsp1J3g" "http://oauth2:FM4JxCg6LeAqQtsp1J3g@172.16.0.52/api/v4/projects/$CI_PROJECT_ID/releases/$RELEASE_VERSION")
+      if [ -n "$EXISTING_RELEASE" ]; then
+         curl --request DELETE --header "PRIVATE-TOKEN: FM4JxCg6LeAqQtsp1J3g" "http://oauth2:FM4JxCg6LeAqQtsp1J3g@172.16.0.52/api/v4/projects/$CI_PROJECT_ID/releases/$RELEASE_VERSION"
+      fi
+      JOB_NAME="$CI_PROJECT_NAME-release"
+      DOWNLOAD_URL="http://172.16.0.102/api/v1/external/oss/generateURL?filePath=$JOB_NAME@application-release-$VERSION.zip"
+      ASSET_LINKS='[{"name": "application.zip", "url": "'"$DOWNLOAD_URL"'"}]'
+       curl --header "PRIVATE-TOKEN: FM4JxCg6LeAqQtsp1J3g" \
+           --header "Content-Type: application/json" \
+           --data "{\"tag_name\":\"$RELEASE_VERSION\",\"name\":\"$RELEASE_VERSION\",\"description\":\"$RELEASE_DESCRIPTION\",\"ref\":\"$CI_COMMIT_REF_NAME\",\"assets\":{\"links\":$ASSET_LINKS}}" \
+           "http://oauth2:FM4JxCg6LeAqQtsp1J3g@172.16.0.52/api/v4/projects/$CI_PROJECT_ID/releases"
+

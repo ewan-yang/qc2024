@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.PowerCutRepeatStatisticsMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.PowerCutRepeatStatistics">
+      <result column="main__region" jdbcType="VARCHAR" property="region" />
+      <result column="main__region_user_count" jdbcType="INTEGER" property="regionUserCount" />
+      <result column="main__power_cut_count" jdbcType="INTEGER" property="powerCutCount" />
+    </resultMap>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.PowerCutRepeatQueryCommand"
+            resultMap="BaseResultMap">
+    SELECT
+      main__region,
+      main__region_user_count,
+      main__power_cut_count
+    FROM (
+      SELECT
+        main.region AS main__region,
+        user_count.user_num AS main__region_user_count,
+        COUNT(*) AS main__power_cut_count
+      FROM t_task_user main
+      LEFT JOIN t_task task ON task.id = main.task_id
+      LEFT JOIN t_task_execute_status es ON es.id = task.execute_status_id
+      LEFT JOIN (
+        SELECT
+          region,
+          COUNT(*) AS user_num
+        FROM (
+          SELECT
+            region,
+            account_number,
+            COUNT(*)
+          FROM t_task_user main
+          LEFT JOIN t_task task ON task.id = main.task_id
+          LEFT JOIN t_task_execute_status es ON es.id = task.execute_status_id
+          WHERE main.deleted = 0
+          AND main.bool_repeat_power_cut = 1
+          AND es.execute_status = '161'
+          <if test = "condition.startDateBegin != null">
+            AND task.start_time &gt;= #{condition.startDateBegin}
+          </if>
+          <if test = "condition.startDateEnd != null">
+            AND task.start_time &lt;= #{condition.startDateEnd}
+          </if>
+          GROUP BY region,account_number
+        ) AS T
+        GROUP BY region
+      ) AS user_count ON user_count.region = main.region
+      WHERE main.deleted = 0
+      AND main.bool_repeat_power_cut = 1
+      AND es.execute_status = '161'
+      GROUP BY main.region, user_count.user_num
+    ) AS T2 WHERE main__power_cut_count > 1
+    AND main__region_user_count > 0
+    ORDER BY main__power_cut_count DESC, main__region
+    </select>
+
+  <select id="getDetailByRegion" parameterType="com.tecpie.platform.report.api.command.query.PowerCutRepeatQueryCommand"
+          resultType="com.tecpie.platform.report.entity.PowerCutRepeatDetail">
+    SELECT DISTINCT
+      task.id,
+      task.task_code,
+      task.start_time
+    FROM t_task_user main
+    LEFT JOIN t_task task ON task.id = main.task_id
+    LEFT JOIN t_task_execute_status es ON es.id = task.execute_status_id
+    WHERE main.deleted = 0
+    AND main.bool_repeat_power_cut = 1
+    AND es.execute_status = '161'
+    <if test = "condition.startDateBegin != null">
+      AND task.start_time &gt;= #{condition.startDateBegin}
+    </if>
+    <if test = "condition.startDateEnd != null">
+      AND task.start_time &lt;= #{condition.startDateEnd}
+    </if>
+    <if test="condition.region != null and condition.region != ''">
+      AND main.region = #{condition.region}
+    </if>
+  </select>
+
+</mapper>

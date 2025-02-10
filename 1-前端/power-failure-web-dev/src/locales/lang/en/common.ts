@@ -1,0 +1,30 @@
+export default {
+  okText: 'OK',
+  closeText: 'Close',
+  cancelText: 'Cancel',
+  loadingText: 'Loading...',
+  saveText: 'Save',
+  delText: 'Delete',
+  resetText: 'Reset',
+  searchText: 'Search',
+  queryText: 'Search',
+
+  inputText: 'Please enter',
+  chooseText: 'Please choose',
+  spreadText: 'Spread',
+  foldText: 'Fold',
+  addText: 'Add',
+  batchRemoveText: 'Batch Remove',
+  operate: 'Operate',
+  edit: 'Edit',
+  detail: 'Detail',
+  delete: 'Delete',
+  disable: 'Disable',
+  enable: 'Enable',
+  redo: 'redo',
+  back: 'Back',
+
+  light: 'Light',
+  dark: 'Dark',
+  menuDark: 'MenuDark'
+};

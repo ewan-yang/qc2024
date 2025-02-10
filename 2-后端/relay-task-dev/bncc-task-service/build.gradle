@@ -1,0 +1,28 @@
+plugins {
+    id "jacoco"
+    id "org.springframework.boot" version "2.3.12.RELEASE"
+}
+
+jar.enabled = true
+bootJar.enabled = false
+
+dependencies {
+    implementation "com.tecpie.base:tecpie-webmvc-starter"
+    implementation "com.tecpie.base:tecpie-security-starter"
+    // 如果项目中不需要引入框架的代码自动生成，则不需要引入 com.tecpie.base:tecpie-code-generator 依赖
+    implementation "com.tecpie.base:tecpie-code-generator"
+
+    // 亚马逊S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.714'
+    // poi
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+    // 二维码
+    implementation 'com.google.zxing:core:3.3.0'
+    // easy-excel
+    implementation 'com.alibaba:easyexcel:3.3.2'
+
+    implementation project(path: ':bncc-user-service')
+    implementation project(path: ':bncc-task-api')
+    // 预告警服务
+    implementation "com.tecpie.bncc:bncc-analysis-alarm-api:1.0.0-SNAPSHOT"
+}

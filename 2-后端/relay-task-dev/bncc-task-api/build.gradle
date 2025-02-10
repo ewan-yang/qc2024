@@ -1,0 +1,30 @@
+dependencies {
+    // easy-excel
+    implementation 'com.alibaba:easyexcel:3.3.2'
+}
+apply plugin: 'maven'
+apply plugin: 'io.spring.dependency-management'
+
+group 'com.tecpie.bncc'
+version '1.0.0-SNAPSHOT'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://172.16.0.31:8081/repository/maven-public/") {
+                authentication(userName: "tecpie", password: "Aa123456")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "bncc-task-api"
+            pom.groupId = "$project.group"
+        }
+        mavenDeployer {
+            repository(url: "http://172.16.0.31:8081/repository/maven-snapshots/") {
+                authentication(userName: "tecpie", password: "Aa123456")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "bncc-task-api"
+            pom.groupId = "$project.group"
+        }
+    }
+}

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.organization.mapper.SysUnitMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.organization.entity.SysUnit">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="main__relation_path" jdbcType="VARCHAR" property="relationPath" />
+    <result column="main__code" jdbcType="VARCHAR" property="code" />
+    <result column="main__name" jdbcType="VARCHAR" property="name" />
+    <result column="main__type" jdbcType="INTEGER" property="type" />
+    <result column="main__sort" jdbcType="INTEGER" property="sort"/>
+    <result column="main__remark" jdbcType="VARCHAR" property="remark"/>
+    <result column="main__status" jdbcType="INTEGER" property="status"/>
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted"/>
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy"/>
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy"/>
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+  </resultMap>
+
+  <resultMap id="UserResultMap" type="com.tecpie.platform.user.business.system.organization.entity.SysUnit">
+    <id column="main__id" jdbcType="BIGINT" property="id"/>
+    <result column="main__parent_id" jdbcType="BIGINT" property="parentId"/>
+    <result column="main__relation_path" jdbcType="VARCHAR" property="relationPath"/>
+    <result column="main__code" jdbcType="VARCHAR" property="code"/>
+    <result column="main__name" jdbcType="VARCHAR" property="name"/>
+    <result column="main__type" jdbcType="INTEGER" property="type"/>
+    <result column="main__sort" jdbcType="INTEGER" property="sort"/>
+    <result column="main__remark" jdbcType="VARCHAR" property="remark"/>
+    <result column="main__status" jdbcType="INTEGER" property="status"/>
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted"/>
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy"/>
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy"/>
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+    <result column="main__user_id" jdbcType="BIGINT" property="userId"/>
+  </resultMap>
+
+  <resultMap id="ExResultMap"
+    type="com.tecpie.platform.user.business.organization.api.resource.SysUnitResource">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__parent_id" jdbcType="BIGINT" property="parentId"/>
+    <result column="parent_name" jdbcType="VARCHAR" property="parentName"/>
+    <result column="main__relation_path" jdbcType="VARCHAR" property="relationPath"/>
+    <result column="main__code" jdbcType="VARCHAR" property="code"/>
+    <result column="main__name" jdbcType="VARCHAR" property="name"/>
+    <result column="main__type" jdbcType="INTEGER" property="type"/>
+    <result column="main__sort" jdbcType="INTEGER" property="sort"/>
+    <result column="main__remark" jdbcType="VARCHAR" property="remark"/>
+    <result column="main__status" jdbcType="INTEGER" property="status"/>
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy"/>
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy"/>
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    main.id as main__id, main.parent_id as main__parent_id, main.relation_path as
+    main__relation_path, main.code as main__code, main.name as main__name, main.type as main__type,
+    main.sort as main__sort, main.remark as main__remark, main.status as main__status, main.deleted
+    as main__deleted, main.create_by as main__create_by, main.create_date as main__create_date,
+    main.update_by as main__update_by, main.update_date as main__update_date
+  </sql>
+
+  <sql id="Column_List_Page_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+  <sql id="Column_List_Combine">
+    <include refid="Base_Column_List"/>
+  </sql>
+
+  <select id="searchExtensionPageList"
+    parameterType="com.tecpie.platform.user.business.organization.api.command.query.SysUnitQueryCommand"
+    resultMap="ExResultMap">
+    select
+    <include refid="Column_List_Page_Combine"/>,
+    u.name AS parent_name
+    from sys_unit main
+    LEFT JOIN sys_unit u ON u.id = main.parent_id
+    where main.deleted = 0
+    <!-- 在此处添加自定义筛选条件 -->
+    <if test="condition.code != null">
+      AND main.code LIKE CONCAT('%',#{condition.code},'%')
+    </if>
+    <if test="condition.name != null">
+      AND main.name LIKE CONCAT('%',#{condition.name},'%')
+    </if>
+    <if test="condition.status != null">
+      AND main.status = #{condition.status, jdbcType=BIGINT}
+    </if>
+    <if test="condition.createBy != null and condition.createBy != ''">
+      AND main.create_by = #{condition.createBy}
+    </if>
+    <if test="condition.createDateBegin != null">
+      AND main.create_date &gt;= #{condition.createDateBegin}
+    </if>
+    <if test="condition.createDateEnd != null">
+        AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+      <if test = "condition.updateBy != null and condition.updateBy != ''">
+        AND main.update_by = #{condition.updateBy}
+      </if>
+      <if test = "condition.updateDateBegin != null">
+        AND main.update_date &gt;= #{condition.updateDateBegin}
+      </if>
+      <if test = "condition.updateDateEnd != null">
+        AND main.update_date &lt;= #{condition.updateDateEnd}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from sys_unit main
+      where main.deleted = 0 and main.id = #{id}
+    </select>
+
+    <select id="selectExtensionByParentId" resultMap="BaseResultMap">
+      select
+      <include refid="Column_List_Combine" />
+      from sys_unit main
+      where main.deleted = 0 and main.parent_id = #{parentId}
+    </select>
+
+  <select id="listByUserIdList" parameterType="list" resultMap="UserResultMap">
+    SELECT
+    t1.user_id AS main__user_id,
+    <include refid="Column_List_Combine"/>
+    FROM sys_unit main
+    LEFT JOIN sys_user_unit AS t1
+    ON main.id = t1.unit_id AND t1.deleted = 0
+    WHERE main.deleted = 0
+    <if test="userIdList != null and userIdList.size() > 0">
+      AND t1.user_id in
+      <foreach collection="userIdList" item="userId" open="(" close=")" separator=",">
+        #{userId}
+      </foreach>
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.plan_item.mapper.PlanItemMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.plan_item.entity.PlanItem">
+    <id column="main__id" property="id" />
+    <result column="main__plan_id" jdbcType="BIGINT" property="planId" />
+    <result column="main__project_code" jdbcType="VARCHAR" property="projectCode" />
+    <result column="main__project_account" jdbcType="VARCHAR" property="projectAccount" />
+    <result column="main__project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="main__project_type" jdbcType="VARCHAR" property="projectType" />
+    <result column="main__start_time" jdbcType="DATE" property="startTime" />
+    <result column="main__end_time" jdbcType="DATE" property="endTime" />
+    <result column="main__station_line_name" jdbcType="LONGVARCHAR" property="stationLineName" />
+    <result column="main__job_content" jdbcType="LONGVARCHAR" property="jobContent" />
+    <result column="main__cos_device" jdbcType="LONGVARCHAR" property="cosDevice" />
+    <result column="main__construction_team" jdbcType="VARCHAR" property="constructionTeam" />
+    <result column="main__execute_status" jdbcType="CHAR" property="executeStatus" />
+    <result column="main__version" jdbcType="BIGINT" property="version" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="BIT" property="status" />
+    <result column="main__deleted" jdbcType="BIT" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <!-- 停电计划对象 -->
+    <association property="plan" column="plan_id" resultMap="com.tecpie.platform.plan.mapper.PlanMapper.PlanResultMap"/>
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.plan_id as main__plan_id, main.project_code as main__project_code, main.project_account as main__project_account, main.project_name as main__project_name, main.project_type as main__project_type, main.start_time as main__start_time, main.end_time as main__end_time, main.station_line_name as main__station_line_name, main.job_content as main__job_content, main.cos_device as main__cos_device, main.construction_team as main__construction_team, main.execute_status as main__execute_status, main.version as main__version, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Join_Table_List">
+      left join t_plan p on p.id = main.plan_id
+    </sql>
+
+    <sql id="Join_Column_List">
+      <include refid="com.tecpie.platform.plan.mapper.PlanMapper.Plan_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />,
+      <include refid="Join_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />,
+      <include refid="Join_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.plan_item.api.command.query.PlanItemQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from
+        t_plan_item main
+        <include refid="Join_Table_List" />
+      where
+        main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+      <if test = "condition.planId != null">
+        AND main.plan_id = #{condition.planId, jdbcType=BIGINT}
+      </if>
+      <if test = "condition.projectType != null and condition.projectType != ''">
+        AND main.project_type like CONCAT('%',#{condition.projectType,jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.projectCode != null and condition.projectCode != ''">
+        AND main.project_code like CONCAT('%',#{condition.projectCode, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.projectCodeList != null and condition.projectCodeList.size() > 0">
+        AND main.project_code in
+        <foreach collection="condition.projectCodeList" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      <if test = "condition.projectName != null and condition.projectName != ''">
+        AND main.project_name like CONCAT('%',#{condition.projectName, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.stationLineName != null and condition.stationLineName != ''">
+        AND main.station_line_name like CONCAT('%',#{condition.stationLineName, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.jobContent != null and condition.jobContent != ''">
+        AND main.job_content like CONCAT('%',#{condition.jobContent, jdbcType=VARCHAR},'%')
+      </if>
+      <if test = "condition.planMonth != null and condition.planMonth != ''">
+        AND DATE_FORMAT(p.plan_month, '%Y-%m') = #{condition.planMonth}
+      </if>
+        <if test="condition.startTimeStart != null">
+            AND main.start_time &gt;= #{condition.startTimeStart}
+        </if>
+        <if test="condition.startTimeEnd != null">
+            AND main.start_time &lt;= #{condition.startTimeEnd}
+        </if>
+        <if test="condition.endTimeStart != null">
+            AND main.end_time &gt;= #{condition.endTimeStart}
+        </if>
+        <if test="condition.endTimeEnd != null">
+            AND main.end_time &lt;= #{condition.endTimeEnd}
+        </if>
+        <if test="condition.constructionTeam != null and condition.constructionTeam != ''">
+            AND main.construction_team LIKE CONCAT('%',#{condition.constructionTeam, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="condition.executeStatus != null and condition.executeStatus != ''">
+            AND main.execute_status = #{condition.executeStatus}
+        </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from
+        t_plan_item main
+        <include refid="Join_Table_List" />
+      where
+        main.deleted = 0 and main.id = #{id}
+    </select>
+</mapper>

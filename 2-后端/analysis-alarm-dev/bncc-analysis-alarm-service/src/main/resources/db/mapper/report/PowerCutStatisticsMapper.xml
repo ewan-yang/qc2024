@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.report.mapper.PowerCutStatisticsMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.report.entity.PowerCutStatistics">
+      <result column="main__region" jdbcType="VARCHAR" property="region" />
+      <result column="main__task_id" jdbcType="BIGINT" property="taskId" />
+      <result column="main__region_user_count" jdbcType="INTEGER" property="regionUserCount" />
+      <result column="main__station_name" jdbcType="VARCHAR" property="stationName" />
+      <result column="main__line_name" jdbcType="VARCHAR" property="lineName" />
+      <result column="main__task_code" jdbcType="VARCHAR" property="taskCode" />
+      <result column="main__start_time" jdbcType="TIMESTAMP" property="startTime" />
+      <result column="main__reason" jdbcType="INTEGER" property="reason" />
+    </resultMap>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.report.api.command.query.PowerCutQueryCommand" resultMap="BaseResultMap">
+        select
+            main.region as main__region, main.task_id as main__task_id, main.count as main__region_user_count,
+            task.station_name as main__station_name, task.line_name as main__line_name, task.task_code as main__task_code,
+            task.start_time as main__start_time, task.reason as main__reason
+        from (
+            select
+                main.region, main.task_id, count( main.id ) as count
+            from
+                t_task_user main
+            where
+                main.deleted = 0
+            group by main.region, main.task_id
+        ) main
+        left join t_task task on main.task_id = task.id
+        left join t_task_execute_status es on es.id = task.execute_status_id
+        where
+            es.execute_status = '161'
+        <if test = "condition.region != null and condition.region != ''">
+            AND main.region like CONCAT('%',#{condition.region, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.stationName != null and condition.stationName != ''">
+            AND task.station_name like CONCAT('%',#{condition.stationName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.lineName != null and condition.lineName != ''">
+            AND task.line_name like CONCAT('%',#{condition.lineName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.startDateBegin != null">
+            AND task.start_time &gt;= #{condition.startDateBegin}
+        </if>
+        <if test = "condition.startDateEnd != null">
+            AND task.start_time &lt;= #{condition.startDateEnd}
+        </if>
+        <if test="condition.taskCode != null and condition.taskCode != ''">
+            AND task.task_code = #{condition.taskCode}
+        </if>
+        order by main.region desc, task.start_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.rule.mapper.TaskAdvanceRuleMapper">
+
+    <resultMap id="BaseResultMap" type="com.tecpie.platform.rule.entity.TaskAdvanceRule">
+        <id column="main__id" property="id" />
+        <result column="main__rule_code" jdbcType="VARCHAR" property="ruleCode" />
+        <result column="main__rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="main__days" jdbcType="INTEGER" property="days" />
+        <result column="main__params1" jdbcType="VARCHAR" property="params1" />
+        <result column="main__params2" jdbcType="VARCHAR" property="params2" />
+        <result column="main__params3" jdbcType="VARCHAR" property="params3" />
+        <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+        <result column="main__status" jdbcType="BIT" property="status" />
+        <result column="main__deleted" jdbcType="BIT" property="deleted" />
+        <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+        <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+        <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        main.id as main__id, main.rule_code as main__rule_code, main.rule_name as main__rule_name, main.days as main__days,
+        main.params1 as main__params1, main.params2 as main__params2, main.params3 as main__params3,
+        main.remark as main__remark, main.status as main__status, main.deleted as main__deleted,
+        main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by,
+        main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+        <include refid="Base_Column_List" />
+    </sql>
+
+    <sql id="Column_List_Combine">
+        <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.rule.api.command.query.TaskAdvanceRuleQueryCommand" resultMap="BaseResultMap">
+        select
+            <include refid="Column_List_Page_Combine" />
+        from
+            t_task_advance_rule main
+        where
+            main.deleted = 0
+        <!-- 在此处添加自定义筛选条件 -->
+        <if test = "condition.ruleCode != null and condition.ruleCode != ''">
+            AND main.rule_code = #{condition.ruleCode, jdbcType=VARCHAR}
+        </if>
+        <if test = "condition.ruleCodeLike != null and condition.ruleCodeLike != ''">
+            AND main.rule_code like CONCAT('%',#{condition.ruleCodeLike, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.ruleName != null and condition.ruleName != ''">
+            AND main.rule_name like CONCAT('%',#{condition.ruleName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.params1 != null and condition.params1 != ''">
+            AND main.params1 like CONCAT('%',#{condition.params1, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.params2 != null and condition.params2 != ''">
+            AND main.params2 like CONCAT('%',#{condition.params2, jdbcType=VARCHAR},'%')
+        </if>
+        <if test = "condition.params3 != null and condition.params3 != ''">
+            AND main.params3 like CONCAT('%',#{condition.params3, jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+        select
+            <include refid="Column_List_Combine"/>
+        from
+            t_task_advance_rule main
+        where
+            main.deleted = 0 and main.id = #{id}
+    </select>
+</mapper>

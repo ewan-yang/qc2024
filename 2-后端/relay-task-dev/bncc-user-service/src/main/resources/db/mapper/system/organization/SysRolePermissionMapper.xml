@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tecpie.platform.user.business.system.organization.mapper.SysRolePermissionMapper">
+
+  <resultMap id="BaseResultMap" type="com.tecpie.platform.user.business.system.organization.entity.SysRolePermission">
+    <id column="main__id" jdbcType="BIGINT" property="id" />
+    <result column="main__role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="main__permission_id" jdbcType="BIGINT" property="permissionId" />
+    <result column="main__remark" jdbcType="VARCHAR" property="remark" />
+    <result column="main__status" jdbcType="INTEGER" property="status" />
+    <result column="main__deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="main__create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="main__create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="main__update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="main__update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+
+    <sql id="Base_Column_List">
+      main.id as main__id, main.role_id as main__role_id, main.permission_id as main__permission_id, main.remark as main__remark, main.status as main__status, main.deleted as main__deleted, main.create_by as main__create_by, main.create_date as main__create_date, main.update_by as main__update_by, main.update_date as main__update_date
+    </sql>
+
+    <sql id="Column_List_Page_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+    <sql id="Column_List_Combine">
+      <include refid="Base_Column_List" />
+    </sql>
+
+    <select id="searchExtensionPageList" parameterType="com.tecpie.platform.user.business.organization.api.command.query.SysRolePermissionQueryCommand" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Page_Combine" />
+      from sys_role_permission main
+      where main.deleted = 0
+      <!-- 在此处添加自定义筛选条件 -->
+
+      <if test = "condition.status != null">
+        AND main.status = #{condition.status, jdbcType=BIGINT}
+      </if>
+      <if test = "condition.createBy != null and condition.createBy != ''">
+        AND main.create_by = #{condition.createBy}
+      </if>
+      <if test = "condition.createDateBegin != null">
+        AND main.create_date &gt;= #{condition.createDateBegin}
+      </if>
+      <if test = "condition.createDateEnd != null">
+        AND main.create_date &lt;= #{condition.createDateEnd}
+      </if>
+      <if test = "condition.updateBy != null and condition.updateBy != ''">
+        AND main.update_by = #{condition.updateBy}
+      </if>
+      <if test = "condition.updateDateBegin != null">
+        AND main.update_date &gt;= #{condition.updateDateBegin}
+      </if>
+      <if test = "condition.updateDateEnd != null">
+        AND main.update_date &lt;= #{condition.updateDateEnd}
+      </if>
+    </select>
+
+    <select id="selectExtensionById" resultMap="BaseResultMap">
+      select
+        <include refid="Column_List_Combine" />
+      from sys_role_permission main
+      where main.deleted = 0 and main.id = #{id}
+    </select>
+</mapper>

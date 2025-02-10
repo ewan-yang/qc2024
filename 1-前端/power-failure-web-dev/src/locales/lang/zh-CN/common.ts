@@ -1,0 +1,30 @@
+export default {
+  okText: '确认',
+  closeText: '关闭',
+  cancelText: '取消',
+  loadingText: '加载中...',
+  saveText: '保存',
+  delText: '删除',
+  resetText: '重置',
+  searchText: '搜索',
+  queryText: '查询',
+
+  inputText: '请输入',
+  chooseText: '请选择',
+  spreadText: '展开',
+  foldText: '收起',
+  addText: '新建',
+  batchRemoveText: '批量删除',
+  operate: '操作',
+  edit: '编辑',
+  detail: '详情',
+  delete: '删除',
+  disable: '停用',
+  enable: '启用',
+  redo: '刷新',
+  back: '返回',
+
+  light: '亮色主题',
+  dark: '黑暗主题',
+  menuDark: '菜单暗色主题'
+};
